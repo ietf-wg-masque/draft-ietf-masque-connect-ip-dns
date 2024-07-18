@@ -1,0 +1,111 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2024-07-18T00:36:57.857207+00:00",
+  "repo": "DavidSchinazi/draft-schinazi-masque-connect-ip-dns",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 1,
+      "id": "I_kwDOLfqCJc6DYcGY",
+      "title": "Add examples",
+      "url": "https://github.com/DavidSchinazi/draft-schinazi-masque-connect-ip-dns/issues/1",
+      "state": "CLOSED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-03-24T07:20:23Z",
+      "updatedAt": "2024-07-06T18:09:50Z",
+      "closedAt": "2024-07-06T18:09:50Z",
+      "comments": []
+    },
+    {
+      "number": 2,
+      "id": "I_kwDOLfqCJc6DYcJp",
+      "title": "DNSSEC?",
+      "url": "https://github.com/DavidSchinazi/draft-schinazi-masque-connect-ip-dns/issues/2",
+      "state": "CLOSED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Should we say something about DNSSEC?",
+      "createdAt": "2024-03-24T07:21:08Z",
+      "updatedAt": "2024-07-05T23:21:37Z",
+      "closedAt": "2024-07-05T23:21:36Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "OWNER",
+          "body": "This mechanism allows DNSSEC. The only additional support for DNSSEC in RFC 8598 was to allow sending custom DNSSEC trust anchors. Let's declare those out of scope.",
+          "createdAt": "2024-07-05T23:21:36Z",
+          "updatedAt": "2024-07-05T23:21:36Z"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "I_kwDOLfqCJc6Dsktm",
+      "title": "Clarify handling of internal domains",
+      "url": "https://github.com/DavidSchinazi/draft-schinazi-masque-connect-ip-dns/issues/3",
+      "state": "CLOSED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Internal domains are currently underspecified. In particular, we should mention that\r\n* `\"\"` (empty string) means nothing goes through the tunnel\r\n* `\".\"` (a single dot) means everything goes through the tunnel",
+      "createdAt": "2024-03-26T23:07:13Z",
+      "updatedAt": "2024-07-06T18:09:50Z",
+      "closedAt": "2024-07-06T18:09:50Z",
+      "comments": []
+    }
+  ],
+  "pulls": []
+}
