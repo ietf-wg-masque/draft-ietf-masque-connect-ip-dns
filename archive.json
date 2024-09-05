@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-03T00:39:48.357492+00:00",
+  "timestamp": "2024-09-05T00:40:10.318784+00:00",
   "repo": "DavidSchinazi/draft-schinazi-masque-connect-ip-dns",
   "labels": [
     {
@@ -104,6 +104,22 @@
       "createdAt": "2024-03-26T23:07:13Z",
       "updatedAt": "2024-07-06T18:09:50Z",
       "closedAt": "2024-07-06T18:09:50Z",
+      "comments": []
+    },
+    {
+      "number": 4,
+      "id": "I_kwDOLfqCJc6VNjIA",
+      "title": "Use correct DNS terminology",
+      "url": "https://github.com/DavidSchinazi/draft-schinazi-masque-connect-ip-dns/issues/4",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "[RFC 8499](https://www.rfc-editor.org/rfc/rfc8499) defines DNS terminology. We should use the terms from that document correctly and reference it.",
+      "createdAt": "2024-09-03T16:59:13Z",
+      "updatedAt": "2024-09-03T16:59:13Z",
+      "closedAt": null,
       "comments": []
     }
   ],
