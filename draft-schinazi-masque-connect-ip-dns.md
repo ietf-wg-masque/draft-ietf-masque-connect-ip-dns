@@ -2,7 +2,7 @@
 title: "DNS Configuration for Proxying IP in HTTP"
 abbrev: "CONNECT-IP DNS"
 category: std
-docname: draft-schinazi-masque-connect-ip-dns-latest
+docname: draft-ietf-masque-connect-ip-dns-latest
 submissiontype: IETF
 number:
 date:
@@ -15,8 +15,8 @@ venue:
   type: "Working Group"
   mail: "masque@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/masque/"
-  github: "DavidSchinazi/draft-schinazi-masque-connect-ip-dns"
-  latest: "https://DavidSchinazi.github.io/draft-schinazi-masque-connect-ip-dns/draft-schinazi-masque-connect-ip-dns.html"
+  github: "ietf-wg-masque/draft-ietf-masque-connect-ip-dns"
+  latest: "https://ietf-wg-masque.github.io/draft-ietf-masque-connect-ip-dns/draft-ietf-masque-connect-ip-dns.html"
 keyword:
   - quic
   - http
