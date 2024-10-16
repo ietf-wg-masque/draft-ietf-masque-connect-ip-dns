@@ -4,12 +4,12 @@
 
 MASQUE                                                       D. Schinazi
 Internet-Draft                                                Google LLC
-Intended status: Standards Track                             6 July 2024
-Expires: 7 January 2025
+Intended status: Standards Track                         16 October 2024
+Expires: 19 April 2025
 
 
                DNS Configuration for Proxying IP in HTTP
-              draft-schinazi-masque-connect-ip-dns-latest
+                draft-ietf-masque-connect-ip-dns-latest
 
 Abstract
 
@@ -24,11 +24,11 @@ About This Document
 
    This note is to be removed before publishing as an RFC.
 
-   The latest revision of this draft can be found at
-   https://DavidSchinazi.github.io/draft-schinazi-masque-connect-ip-dns/
-   draft-schinazi-masque-connect-ip-dns.html.  Status information for
-   this document may be found at https://datatracker.ietf.org/doc/draft-
-   schinazi-masque-connect-ip-dns/.
+   The latest revision of this draft can be found at https://ietf-wg-
+   masque.github.io/draft-ietf-masque-connect-ip-dns/draft-ietf-masque-
+   connect-ip-dns.html.  Status information for this document may be
+   found at https://datatracker.ietf.org/doc/draft-ietf-masque-connect-
+   ip-dns/.
 
    Discussion of this document takes place on the Multiplexed
    Application Substrate over QUIC Encryption Working Group mailing list
@@ -37,8 +37,7 @@ About This Document
    https://www.ietf.org/mailman/listinfo/masque/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/DavidSchinazi/draft-schinazi-masque-connect-ip-
-   dns.
+   https://github.com/ietf-wg-masque/draft-ietf-masque-connect-ip-dns.
 
 Status of This Memo
 
@@ -55,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 January 2025.
+   This Internet-Draft will expire on 19 April 2025.
 
 Copyright Notice
 
