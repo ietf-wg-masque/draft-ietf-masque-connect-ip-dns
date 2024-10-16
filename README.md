@@ -1,6 +1,6 @@
-# DNS Extensions for Proxying IP in HTTP
+# DNS Configuration for Proxying IP in HTTP
 
-This is the working area for the individual Internet-Draft, "DNS Extensions for Proxying IP in HTTP".
+This is the working area for the individual Internet-Draft, "DNS Configuration for Proxying IP in HTTP".
 
 * [Editor's Copy](https://DavidSchinazi.github.io/draft-schinazi-masque-connect-ip-dns/#go.draft-schinazi-masque-connect-ip-dns.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-schinazi-masque-connect-ip-dns)
