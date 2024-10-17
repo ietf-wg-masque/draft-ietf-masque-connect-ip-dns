@@ -80,6 +80,10 @@ defines protocol types, the definition format uses the notation from {{Section
 from {{Section 16 of !QUIC=RFC9000}}. Variable-length integer values do not
 need to be encoded in the minimum number of bytes necessary.
 
+In this document, we use the term "nameserver" to refer to a DNS recursive
+resolver as defined in {{Section 6 of !DNS-TERMS=RFC8499}}, and the term
+"domain name" is used as defined in {{Section 2 of !DNS-TERMS}}.
+
 # Mechanism
 
 Similar to how Proxying IP in HTTP exchanges IP address configuration
@@ -112,9 +116,9 @@ Length:
 
 Value:
 
-: DNS name server configuration value, depends on the Type. This is commonly an
-IP address, but for other protocols it can also represent a URI template or a
-hostname.
+: Nameserver configuration value, depends on the Type. This is commonly an IP
+address, but for other protocols it can also represent a URI template or a
+domain name.
 
 This document defines the following types:
 
@@ -123,14 +127,14 @@ This document defines the following types:
   encoded in network byte order. Length SHALL be either 32 or 128 bits.
 
 * DNS over TLS. Type = 1. DNS is sent over TLS, as per {{!DoT=RFC7858}}. The
-  Value is a hostname, optionally followed by a colon and a port. The encoding
-  is the same as an authority without userinfo as defined in {{Section 3.2 of
-  !URI=RFC3986}}. It is encoded as ASCII, and not null-terminated. IPv4 and
-  IPv6 addresses can be encoded using this format, though IPv6 addresses need
-  to be enclosed in square brackets.
+  Value is a domain name, optionally followed by a colon and a port. The
+  encoding is the same as an authority without userinfo as defined in {{Section
+  3.2 of !URI=RFC3986}}. It is encoded as ASCII, and not null-terminated. IPv4
+  and IPv6 addresses can be encoded using this format, though IPv6 addresses
+  need to be enclosed in square brackets.
 
 * DNS over QUIC. Type = 2. DNS is sent over QUIC, as per {{!DoQ=RFC9250}}. The
-  Value is a hostname, encoded the same as for DNS over TLS.
+  Value is a domain name, encoded the same as for DNS over TLS.
 
 * DNS over HTTPS. Type = 3. DNS is sent over HTTPS, as per {{!DoH=RFC8484}}.
   The Value is a URI Template. It is encoded as ASCII, and not null-terminated.
@@ -188,7 +192,7 @@ a variable-length integer.
 
 Nameserver:
 
-: A series of Nameserver structures representing DNS name servers.
+: A series of Nameserver structures representing nameservers.
 
 Internal Domain Count:
 
@@ -197,7 +201,7 @@ variable-length integer.
 
 Internal Domain:
 
-: A series of Domain structures representing internal DNS names.
+: A series of Domain structures representing internal domain names.
 
 Search Domain Count:
 
@@ -215,7 +219,7 @@ The DNS_REQUEST capsule (see {{iana}} for the value of the capsule type) allows
 an endpoint to request DNS configuration from its peer. The capsule allows the
 endpoint to optionally indicate a preference for which DNS configuration it
 would get assigned. The sender can indicate that it has no preference by not
-sending any name servers or domain names in its request DNS Configuration.
+sending any nameservers or domain names in its request DNS Configuration.
 
 ~~~
 DNS_REQUEST Capsule {
@@ -259,20 +263,20 @@ to zero.
 
 Note that internal domains include subdomains. In other words, if the DNS
 configuration contains a domain, that indicates that the corresponding domain
-and all of its subdomains can be resolved by the name servers exchanged in the
+and all of its subdomains can be resolved by the nameservers exchanged in the
 same DNS configuration. Sending an empty string as an internal domain indicates
-the DNS root; i.e., that the corresponding name server can resolve all domain
+the DNS root; i.e., that the corresponding nameserver can resolve all domain
 names.
 
 As with other IP Proxying capsules, the receiver can decide whether to use or
 ignore the configuration information. For example, in the consumer VPN
-scenario, clients will trust the server and apply received DNS configuration,
-whereas servers will ignore any DNS configuration sent by the client.
+scenario, clients will trust the IP proxy and apply received DNS configuration,
+whereas IP proxies will ignore any DNS configuration sent by the client.
 
-If the IP proxy sends a DNS_ASSIGN capsule containing a DNS over HTTPS name
-server, then the client can validate whether the IP proxy is authoritative for
-the hostname in the URI template. If this validation succeeds, the client
-SHOULD send its DNS queries to that name server directly as independent HTTPS
+If the IP proxy sends a DNS_ASSIGN capsule containing a DNS over HTTPS
+nameserver, then the client can validate whether the IP proxy is authoritative
+for the origin of the URI template. If this validation succeeds, the client
+SHOULD send its DNS queries to that nameserver directly as independent HTTPS
 requests over the same HTTPS connection.
 
 # Examples
@@ -324,7 +328,7 @@ Acting on received DNS_ASSIGN capsules can have significant impact on endpoint
 security. Endpoints MUST ignore DNS_ASSIGN capsules unless it has reason to
 trust its peer and is expecting DNS configuration from it.
 
-This mechanism can cause an endpoint to use a DNS server that is outside of the
+This mechanism can cause an endpoint to use a nameserver that is outside of the
 connect-ip tunnel. While this is acceptable in some scenarios, in others it
 could break the privacy properties provided by the tunnel. To avoid this,
 implementations need to ensure that DNS_ASSIGN capsules are not sent before the
