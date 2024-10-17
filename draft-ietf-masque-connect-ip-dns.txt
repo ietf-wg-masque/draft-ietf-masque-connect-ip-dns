@@ -4,8 +4,8 @@
 
 MASQUE                                                       D. Schinazi
 Internet-Draft                                                Google LLC
-Intended status: Standards Track                         16 October 2024
-Expires: 19 April 2025
+Intended status: Standards Track                         17 October 2024
+Expires: 20 April 2025
 
 
                DNS Configuration for Proxying IP in HTTP
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 April 2025.
+   This Internet-Draft will expire on 20 April 2025.
 
 Copyright Notice
 
@@ -100,6 +100,10 @@ Table of Contents
    information using HTTP capsules ([HTTP-DGRAM]).  This document does
    not define any new ways to convey DNS queries or responses, only a
    mechanism to exchange DNS configuration information.
+
+   Note that this extension is meant for cases where connect-ip is used
+   like a Remote Access VPN (see Section 8.1 of [CONNECT-IP]), but not
+   for cases like IP Flow Forwarding (see Section 8.3 of [CONNECT-IP]).
 
 1.1.  Conventions and Definitions
 
@@ -349,6 +353,13 @@ Table of Contents
    it has reason to trust its peer and is expecting DNS configuration
    from it.
 
+   This mechanism can cause an endpoint to use a DNS server that is
+   outside of the connect-ip tunnel.  While this is acceptable in some
+   scenarios, in others it could break the privacy properties provided
+   by the tunnel.  To avoid this, implementations need to ensure that
+   DNS_ASSIGN capsules are not sent before the corresponding
+   ROUTE_ADVERTISEMENT capsule.
+
    The requirement for an endpoint to always send DNS_ASSIGN capsules in
    response to DNS_REQUEST capsules could lead it to buffer unbounded
    amounts of memory if the underlying stream is blocked by flow or
@@ -455,7 +466,8 @@ Table of Contents
 Acknowledgments
 
    The mechanism is this document was inspired by [IKEv2] and
-   [IKEv2-DNS].
+   [IKEv2-DNS].  The author would like to thank Alex Chernyakhovsky and
+   Tommy Pauly for their contributions.
 
 Author's Address
 
