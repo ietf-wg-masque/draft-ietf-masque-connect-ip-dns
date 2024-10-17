@@ -1,6 +1,6 @@
 # DNS Configuration for Proxying IP in HTTP
 
-This is the working area for the MASQUE Working Group Internet-Draft, "DNS Configuration for Proxying IP in HTTP".
+This is the working area for the IETF [MASQUE Working Group](https://datatracker.ietf.org/wg/masque/documents/) Internet-Draft, "DNS Configuration for Proxying IP in HTTP".
 
 * [Editor's Copy](https://ietf-wg-masque.github.io/draft-ietf-masque-connect-ip-dns/#go.draft-ietf-masque-connect-ip-dns.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-masque-connect-ip-dns)
