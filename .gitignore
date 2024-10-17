@@ -17,7 +17,7 @@
 /versioned/
 Gemfile.lock
 archive.json
-draft-schinazi-masque-connect-ip-dns.xml
+draft-ietf-masque-connect-ip-dns.xml
 package-lock.json
 report.xml
 !requirements.txt
