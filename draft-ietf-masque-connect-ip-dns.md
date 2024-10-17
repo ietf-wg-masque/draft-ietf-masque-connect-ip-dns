@@ -379,6 +379,6 @@ Notes:
 # Acknowledgments
 {:numbered="false"}
 
-The mechanism is this document was inspired by {{IKEv2}} and
+The mechanism in this document was inspired by {{IKEv2}} and
 {{?IKEv2-DNS=RFC8598}}. The author would like to thank {{{Alex
 Chernyakhovsky}}} and {{{Tommy Pauly}}} for their contributions.
