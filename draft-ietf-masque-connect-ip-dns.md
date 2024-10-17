@@ -324,6 +324,12 @@ Acting on received DNS_ASSIGN capsules can have significant impact on endpoint
 security. Endpoints MUST ignore DNS_ASSIGN capsules unless it has reason to
 trust its peer and is expecting DNS configuration from it.
 
+This mechanism can cause an endpoint to use a DNS server that is outside of the
+connect-ip tunnel. While this is acceptable in some scenarios, in others it
+could break the privacy properties provided by the tunnel. To avoid this,
+implementations need to ensure that DNS_ASSIGN capsules are not sent before the
+corresponding ROUTE_ADVERTISEMENT capsule.
+
 The requirement for an endpoint to always send DNS_ASSIGN capsules in response
 to DNS_REQUEST capsules could lead it to buffer unbounded amounts of memory if
 the underlying stream is blocked by flow or congestion control. Implementations
@@ -374,4 +380,5 @@ Notes:
 {:numbered="false"}
 
 The mechanism is this document was inspired by {{IKEv2}} and
-{{?IKEv2-DNS=RFC8598}}.
+{{?IKEv2-DNS=RFC8598}}. The author would like to thank {{{Alex
+Chernyakhovsky}}} and {{{Tommy Pauly}}} for their contributions.
