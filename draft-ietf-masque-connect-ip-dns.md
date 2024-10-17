@@ -66,6 +66,10 @@ an extension that exchanges this information using HTTP capsules
 DNS queries or responses, only a mechanism to exchange DNS configuration
 information.
 
+Note that this extension is meant for cases where connect-ip is used like a
+Remote Access VPN (see {{Section 8.1 of CONNECT-IP}}), but not for cases like
+IP Flow Forwarding (see {{Section 8.3 of CONNECT-IP}}).
+
 ## Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
