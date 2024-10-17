@@ -120,6 +120,10 @@ Table of Contents
    values do not need to be encoded in the minimum number of bytes
    necessary.
 
+   In this document, we use the term "nameserver" to refer to a DNS
+   recursive resolver as defined in Section 6 of [DNS-TERMS], and the
+   term "domain name" is used as defined in Section 2 of [DNS-TERMS].
+
 2.  Mechanism
 
    Similar to how Proxying IP in HTTP exchanges IP address configuration
@@ -148,9 +152,9 @@ Table of Contents
    Length:  The length of the following Value field, encoded as a
       variable-length integer.
 
-   Value:  DNS name server configuration value, depends on the Type.
-      This is commonly an IP address, but for other protocols it can
-      also represent a URI template or a hostname.
+   Value:  Nameserver configuration value, depends on the Type.  This is
+      commonly an IP address, but for other protocols it can also
+      represent a URI template or a domain name.
 
    This document defines the following types:
 
@@ -160,7 +164,7 @@ Table of Contents
       either 32 or 128 bits.
 
    *  DNS over TLS.  Type = 1.  DNS is sent over TLS, as per [DoT].  The
-      Value is a hostname, optionally followed by a colon and a port.
+      Value is a domain name, optionally followed by a colon and a port.
       The encoding is the same as an authority without userinfo as
       defined in Section 3.2 of [URI].  It is encoded as ASCII, and not
       null-terminated.  IPv4 and IPv6 addresses can be encoded using
@@ -168,7 +172,7 @@ Table of Contents
       brackets.
 
    *  DNS over QUIC.  Type = 2.  DNS is sent over QUIC, as per [DoQ].
-      The Value is a hostname, encoded the same as for DNS over TLS.
+      The Value is a domain name, encoded the same as for DNS over TLS.
 
    *  DNS over HTTPS.  Type = 3.  DNS is sent over HTTPS, as per [DoH].
       The Value is a URI Template.  It is encoded as ASCII, and not
@@ -221,14 +225,14 @@ Table of Contents
       as a variable-length integer.
 
    Nameserver:
-      A series of Nameserver structures representing DNS name servers.
+      A series of Nameserver structures representing nameservers.
 
    Internal Domain Count:
       The number of Domain structures following this field.  Encoded as
       a variable-length integer.
 
    Internal Domain:
-      A series of Domain structures representing internal DNS names.
+      A series of Domain structures representing internal domain names.
 
    Search Domain Count:
       The number of Domain structures following this field.  Encoded as
@@ -243,7 +247,7 @@ Table of Contents
    type) allows an endpoint to request DNS configuration from its peer.
    The capsule allows the endpoint to optionally indicate a preference
    for which DNS configuration it would get assigned.  The sender can
-   indicate that it has no preference by not sending any name servers or
+   indicate that it has no preference by not sending any nameservers or
    domain names in its request DNS Configuration.
 
    DNS_REQUEST Capsule {
@@ -288,22 +292,22 @@ Table of Contents
    Note that internal domains include subdomains.  In other words, if
    the DNS configuration contains a domain, that indicates that the
    corresponding domain and all of its subdomains can be resolved by the
-   name servers exchanged in the same DNS configuration.  Sending an
+   nameservers exchanged in the same DNS configuration.  Sending an
    empty string as an internal domain indicates the DNS root; i.e., that
-   the corresponding name server can resolve all domain names.
+   the corresponding nameserver can resolve all domain names.
 
    As with other IP Proxying capsules, the receiver can decide whether
    to use or ignore the configuration information.  For example, in the
-   consumer VPN scenario, clients will trust the server and apply
-   received DNS configuration, whereas servers will ignore any DNS
+   consumer VPN scenario, clients will trust the IP proxy and apply
+   received DNS configuration, whereas IP proxies will ignore any DNS
    configuration sent by the client.
 
    If the IP proxy sends a DNS_ASSIGN capsule containing a DNS over
-   HTTPS name server, then the client can validate whether the IP proxy
-   is authoritative for the hostname in the URI template.  If this
+   HTTPS nameserver, then the client can validate whether the IP proxy
+   is authoritative for the origin of the URI template.  If this
    validation succeeds, the client SHOULD send its DNS queries to that
-   name server directly as independent HTTPS requests over the same
-   HTTPS connection.
+   nameserver directly as independent HTTPS requests over the same HTTPS
+   connection.
 
 4.  Examples
 
@@ -353,7 +357,7 @@ Table of Contents
    it has reason to trust its peer and is expecting DNS configuration
    from it.
 
-   This mechanism can cause an endpoint to use a DNS server that is
+   This mechanism can cause an endpoint to use a nameserver that is
    outside of the connect-ip tunnel.  While this is acceptable in some
    scenarios, in others it could break the privacy properties provided
    by the tunnel.  To avoid this, implementations need to ensure that
@@ -406,6 +410,11 @@ Table of Contents
    [DNS]      Mockapetris, P., "Domain names - implementation and
               specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
               November 1987, <https://www.rfc-editor.org/rfc/rfc1035>.
+
+   [DNS-TERMS]
+              Hoffman, P., Sullivan, A., and K. Fujiwara, "DNS
+              Terminology", RFC 8499, DOI 10.17487/RFC8499, January
+              2019, <https://www.rfc-editor.org/rfc/rfc8499>.
 
    [DoH]      Hoffman, P. and P. McManus, "DNS Queries over HTTPS
               (DoH)", RFC 8484, DOI 10.17487/RFC8484, October 2018,
