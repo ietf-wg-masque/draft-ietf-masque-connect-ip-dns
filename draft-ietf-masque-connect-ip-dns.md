@@ -50,7 +50,7 @@ at the time of writing, that mechanism doesn't offer a mechanism for
 communicating DNS configuration information inline. In contrast, most existing
 VPN protocols provide a mechanism to exchange DNS configuration information.
 This document describes an extension that exchanges this information using HTTP
-capsules.
+capsules. This mechanism supports encrypted DNS transports.
 
 --- middle
 
@@ -69,6 +69,12 @@ information.
 Note that this extension is meant for cases where connect-ip is used like a
 Remote Access VPN (see {{Section 8.1 of CONNECT-IP}}), but not for cases like
 IP Flow Forwarding (see {{Section 8.3 of CONNECT-IP}}).
+
+This specification uses Service Bindings ({{!SVCB=RFC9460}}) to exchange
+information about nameservers, such as which encrypted DNS transport is
+supported. This allows support for DNS over HTTPS ({{!DoH=RFC8484}}), DNS over
+QUIC ({{!DoQ=RFC9250}}), DNS over TLS ({{!DoT=RFC7858}}), unencrypted DNS over
+UDP port 53 ({{!DNS=RFC1035}}), and potential future DNS transports.
 
 ## Conventions and Definitions
 
@@ -94,52 +100,7 @@ information by sending a DNS_REQUEST capsule, and either endpoint can send DNS
 configuration information in a DNS_ASSIGN capsule. These capsules follow the
 format defined below.
 
-~~~
-Nameserver {
-  Type (i),
-  Length (i),
-  Value (...),
-}
-~~~
-{: #ns-format title="Nameserver Format"}
-
-Each Nameserver structure contains the following fields:
-
-Type:
-
-: An integer representing the protocol over which DNS queries and responses are
-sent. See below for possible values. Encoded as a variable-length integer.
-
-Length:
-
-: The length of the following Value field, encoded as a variable-length integer.
-
-Value:
-
-: Nameserver configuration value, depends on the Type. This is commonly an IP
-address, but for other protocols it can also represent a URI template or a
-domain name.
-
-This document defines the following types:
-
-* DNS over port 53. Type = 0. DNS is sent unencrypted over UDP or TCP port 53,
-  as per {{!DNS=RFC1035}}. The Value is an IP address (either IPv4 or IPv6)
-  encoded in network byte order. Length SHALL be either 32 or 128 bits.
-
-* DNS over TLS. Type = 1. DNS is sent over TLS, as per {{!DoT=RFC7858}}. The
-  Value is a domain name, optionally followed by a colon and a port. The
-  encoding is the same as an authority without userinfo as defined in {{Section
-  3.2 of !URI=RFC3986}}. It is encoded as ASCII, and not null-terminated. IPv4
-  and IPv6 addresses can be encoded using this format, though IPv6 addresses
-  need to be enclosed in square brackets.
-
-* DNS over QUIC. Type = 2. DNS is sent over QUIC, as per {{!DoQ=RFC9250}}. The
-  Value is a domain name, encoded the same as for DNS over TLS.
-
-* DNS over HTTPS. Type = 3. DNS is sent over HTTPS, as per {{!DoH=RFC8484}}.
-  The Value is a URI Template. It is encoded as ASCII, and not null-terminated.
-
-* TODO: properly define an IANA registry with GREASE for future types.
+## Domain Structure
 
 ~~~
 Domain {
@@ -160,6 +121,88 @@ Domain Name:
 : Fully Qualified Domain Name in DNS presentation format and using an
 Internationalized Domain Names for Applications (IDNA) A-label
 ({{!IDNA=RFC5890}}).
+
+## Nameserver Structure {#domain-struct}
+
+~~~
+Nameserver {
+  Service Priority (16),
+  IPv4 Address Count (i),
+  IPv4 Address (32) ...,
+  IPv6 Address Count (i),
+  IPv6 Address (128) ...,
+  Nameserver Domain (..),
+  Service Parameters Length (i),
+  Service Parameters (..),
+}
+~~~
+{: #ns-format title="Nameserver Format"}
+
+Each Nameserver structure contains the following fields:
+
+Service Priority:
+
+: The priority of this attribute compared to other nameservers, as specified in
+{{Section 2.4.1 of SVCB}}. Since this specification relies on using Service
+Bindings in ServiceMode ({{Section 2.4.3 of SVCB}}), this field MUST NOT be set
+to 0.
+
+IPv4 Address Count:
+
+: The number of IPv4 Address fields following this field. Encoded as a
+variable-length integer.
+
+IPv4 Address:
+
+: Sequence of IPv4 Addresses that can be used to reach this nameserver. Encoded
+in network byte order.
+
+IPv6 Address Count:
+
+: The number of IPv6 Address fields following this field. Encoded as a
+variable-length integer.
+
+IPv6 Address:
+
+: Sequence of IPv6 Addresses that can be used to reach this nameserver. Encoded
+in network byte order.
+
+Nameserver Domain:
+
+: A Domain structure (see {{domain-struct}}) representing the domain name of
+the nameserver. This MAY be empty if the nameserver only supports unencrypted
+DNS (as traditionally sent over UDP port 53).
+
+Service Parameters Length:
+
+: Length of the following Service Parameters field, encoded as a
+variable-length integer.
+
+Service Parameters:
+
+: Set of service parameters that apply to this nameserver. Encoded using the
+wire format specified in {{Section 2.2 of SVCB}}.
+
+Service parameters allow exchanging additional information about the nameserver:
+
+* The "port" service parameter is used to indicate which port the nameserver is
+  reachable on. If no "port" service parameter is included, this indicates that
+  default port numbers should be used.
+
+* The "alpn" service parameter is used to indicate which encrypted DNS
+  transports are supported by this nameserver. If the "no-default-alpn" service
+  parameter is omitted, that indicates that the nameserver supports unencrypted
+  DNS, as is traditionally sent over UDP port 53. In that case, the sum of IPv4
+  Address Count and IPv6 Address Count MUST be nonzero. If Nameserver Domain is
+  empty, the "alpn" and "no-default-alpn" service parameter MUST be omitted.
+
+* The "dohpath" service parameter is used to convey a relative DNS over HTTPS
+  URI Template, see {{Section 5 of !SVCB-DNS=RFC9461}}.
+
+* The service parameters MUST NOT include "ipv4hint" or "ipv6hint" SvcParams,
+  as they are superseded by the included IP addresses.
+
+## DNS Configuration Structure
 
 ~~~
 DNS Configuration {
@@ -277,7 +320,8 @@ If the IP proxy sends a DNS_ASSIGN capsule containing a DNS over HTTPS
 nameserver, then the client can validate whether the IP proxy is authoritative
 for the origin of the URI template. If this validation succeeds, the client
 SHOULD send its DNS queries to that nameserver directly as independent HTTPS
-requests over the same HTTPS connection.
+requests. When possible, those requests SHOULD be coalesced over the same HTTPS
+connection.
 
 # Examples
 
@@ -290,8 +334,14 @@ configuration.
 ~~~
 DNS Configuration = {
   Nameservers = [{
-    Type = 3,  // DNS over HTTPS
-    Value = "https://masque.example/dns-query{?dns}",
+    Service Priority = 1,
+    IPv4 Address = [],
+    IPv6 Address = [],
+    Nameserver Domain = "masque.example",
+    Service Parameters = {
+      alpn=h2,h3
+      dohpath=/dns-query{?dns}
+    },
   }],
   Internal Domains = [""],
   Search Domains = [],
@@ -301,17 +351,17 @@ DNS Configuration = {
 
 ## Split-Tunnel Enterprise VPN
 
-An enterprise switching their preexisting IPsec split-tunnel VPN could use the
-following configuration.
+An enterprise switching their preexisting IKEv2/IPsec split-tunnel VPN to
+connect-ip could use the following configuration.
 
 ~~~
 DNS Configuration = {
   Nameservers = [{
-    Type = 0,  // DNS over 53
-    Value = 2001:db8::1,
-  }, {
-    Type = 0,  // DNS over 53
-    Value = 192.0.2.33,
+    Service Priority = 1,
+    IPv4 Address = [192.0.2.33],
+    IPv6 Address = [2001:db8::1],
+    Nameserver Domain = "",
+    Service Parameters = {},
   }],
   Internal Domains = ["internal.corp.example"],
   Search Domains = [
@@ -346,10 +396,10 @@ This document, if approved, will request IANA add the following values to the
 "HTTP Capsule Types" registry maintained at
 <[](https://www.iana.org/assignments/masque)>.
 
-|   Value    | Capsule Type |
-|:-----------|:-------------|
-| 0x1460B736 |  DNS_ASSIGN  |
-| 0x1460B737 |  DNS_REQUEST |
+|   Value   | Capsule Type |
+|:----------|:-------------|
+| 0x818F79E |  DNS_ASSIGN  |
+| 0x818F79F |  DNS_REQUEST |
 {: #iana-capsules-table title="New Capsules"}
 
 Note that, if this document is approved, the values defined above will be
@@ -383,6 +433,7 @@ Notes:
 # Acknowledgments
 {:numbered="false"}
 
-The mechanism in this document was inspired by {{IKEv2}} and
-{{?IKEv2-DNS=RFC8598}}. The author would like to thank {{{Alex
-Chernyakhovsky}}} and {{{Tommy Pauly}}} for their contributions.
+The mechanism in this document was inspired by {{IKEv2}},
+{{?IKEv2-DNS=RFC8598}}, and {{?IKEv2-SVCB=RFC9464}}. The author would like to
+thank {{{Alex Chernyakhovsky}}}, {{{Tommy Pauly}}}, and other enthusiasts in
+the MASQUE Working Group for their contributions.
