@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-17T00:42:56.314595+00:00",
+  "timestamp": "2024-10-20T00:47:48.209308+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-connect-ip-dns",
   "labels": [
     {
@@ -111,16 +111,24 @@
       "id": "I_kwDOLfqCJc6VNjIA",
       "title": "Use correct DNS terminology",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-connect-ip-dns/issues/4",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "[RFC 8499](https://www.rfc-editor.org/rfc/rfc8499) defines DNS terminology. We should use the terms from that document correctly and reference it.",
       "createdAt": "2024-09-03T16:59:13Z",
-      "updatedAt": "2024-09-03T16:59:13Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2024-10-17T01:11:32Z",
+      "closedAt": "2024-10-17T01:11:32Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by 3552c6d2f1e43fddd295fdd5f395f32893296941",
+          "createdAt": "2024-10-17T01:11:32Z",
+          "updatedAt": "2024-10-17T01:11:32Z"
+        }
+      ]
     }
   ],
   "pulls": []
