@@ -108,7 +108,7 @@ Domain {
   Domain Name (..),
 }
 ~~~
-{: #domain-format title="Internal Domain Format"}
+{: #domain-format title="Domain Format"}
 
 Each Domain contains the following fields:
 
