@@ -131,7 +131,7 @@ Nameserver {
   IPv4 Address (32) ...,
   IPv6 Address Count (i),
   IPv6 Address (128) ...,
-  Nameserver Domain (..),
+  Authentication Domain Name (..),
   Service Parameters Length (i),
   Service Parameters (..),
 }
@@ -167,7 +167,7 @@ IPv6 Address:
 : Sequence of IPv6 Addresses that can be used to reach this nameserver. Encoded
 in network byte order.
 
-Nameserver Domain:
+Authentication Domain Name:
 
 : A Domain structure (see {{domain-struct}}) representing the domain name of
 the nameserver. This MAY be empty if the nameserver only supports unencrypted
@@ -193,8 +193,9 @@ Service parameters allow exchanging additional information about the nameserver:
   transports are supported by this nameserver. If the "no-default-alpn" service
   parameter is omitted, that indicates that the nameserver supports unencrypted
   DNS, as is traditionally sent over UDP port 53. In that case, the sum of IPv4
-  Address Count and IPv6 Address Count MUST be nonzero. If Nameserver Domain is
-  empty, the "alpn" and "no-default-alpn" service parameter MUST be omitted.
+  Address Count and IPv6 Address Count MUST be nonzero. If Authentication
+  Domain Name is empty, the "alpn" and "no-default-alpn" service parameter MUST
+  be omitted.
 
 * The "dohpath" service parameter is used to convey a relative DNS over HTTPS
   URI Template, see {{Section 5 of !SVCB-DNS=RFC9461}}.
@@ -337,7 +338,7 @@ DNS Configuration = {
     Service Priority = 1,
     IPv4 Address = [],
     IPv6 Address = [],
-    Nameserver Domain = "masque.example",
+    Authentication Domain Name = "masque.example",
     Service Parameters = {
       alpn=h2,h3
       dohpath=/dns-query{?dns}
@@ -360,7 +361,7 @@ DNS Configuration = {
     Service Priority = 1,
     IPv4 Address = [192.0.2.33],
     IPv6 Address = [2001:db8::1],
-    Nameserver Domain = "",
+    Authentication Domain Name = "",
     Service Parameters = {},
   }],
   Internal Domains = ["internal.corp.example"],
