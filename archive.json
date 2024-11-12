@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-11-10T00:45:49.086957+00:00",
+  "timestamp": "2024-11-12T00:42:05.187449+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-connect-ip-dns",
   "labels": [
     {
@@ -135,15 +135,15 @@
       "id": "I_kwDOLfqCJc6dRSe7",
       "title": "Teminology: \"Nameserver Domain\" -> \"Authentication Domain Name\"",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-connect-ip-dns/issues/5",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "bemasc",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "For consistency with DoT, DHCP-DNR, etc. the term should be \"Authentication Domain Name\".  This also helps to emphasize that the domain is not supposed to be resolved to get IP addresses.",
       "createdAt": "2024-11-06T16:08:20Z",
-      "updatedAt": "2024-11-06T16:08:34Z",
-      "closedAt": null,
+      "updatedAt": "2024-11-11T10:46:51Z",
+      "closedAt": "2024-11-11T10:46:51Z",
       "comments": []
     }
   ],
