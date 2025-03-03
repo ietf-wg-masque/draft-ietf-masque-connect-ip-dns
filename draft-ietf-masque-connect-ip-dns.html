@@ -20,7 +20,6 @@ capsules. This mechanism supports encrypted DNS transports.
 <meta content="http" name="keyword">
 <meta content="datagram" name="keyword">
 <meta content="udp" name="keyword">
-<meta content="tcp" name="keyword">
 <meta content="proxy" name="keyword">
 <meta content="tunnels" name="keyword">
 <meta content="quic in quic" name="keyword">
@@ -1261,8 +1260,7 @@ IP Flow Forwarding (see <span><a href="https://rfc-editor.org/rfc/rfc9484#sectio
 information about nameservers, such as which encrypted DNS transport is
 supported. This allows support for DNS over HTTPS (<span>[<a href="#DoH" class="cite xref">DoH</a>]</span>), DNS over
 QUIC (<span>[<a href="#DoQ" class="cite xref">DoQ</a>]</span>), DNS over TLS (<span>[<a href="#DoT" class="cite xref">DoT</a>]</span>), unencrypted DNS over
-UDP port 53 and TCP port 53 (<span>[<a href="#DNS" class="cite xref">DNS</a>]</span>), as well as potential future DNS
-transports.<a href="#section-1-3" class="pilcrow">¶</a></p>
+UDP port 53 (<span>[<a href="#DNS" class="cite xref">DNS</a>]</span>), and potential future DNS transports.<a href="#section-1-3" class="pilcrow">¶</a></p>
 <div id="conventions-and-definitions">
 <section id="section-1.1">
         <h3 id="name-conventions-and-definitions">
@@ -1394,7 +1392,7 @@ in network byte order.<a href="#section-2.2-3.10.1" class="pilcrow">¶</a></p>
           <dd style="margin-left: 1.5em" id="section-2.2-3.12">
             <p id="section-2.2-3.12.1">A Domain structure (see <a href="#domain-struct" class="auto internal xref">Section 2.2</a>) representing the domain name of
 the nameserver. This <span class="bcp14">MAY</span> be empty if the nameserver only supports unencrypted
-DNS (as traditionally sent over UDP port 53 and TCP port 53).<a href="#section-2.2-3.12.1" class="pilcrow">¶</a></p>
+DNS (as traditionally sent over UDP port 53).<a href="#section-2.2-3.12.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-2.2-3.13">Service Parameters Length:</dt>
@@ -1421,10 +1419,10 @@ default port numbers should be used.<a href="#section-2.2-5.1.1" class="pilcrow"
             <p id="section-2.2-5.2.1">The "alpn" service parameter is used to indicate which encrypted DNS
 transports are supported by this nameserver. If the "no-default-alpn" service
 parameter is omitted, that indicates that the nameserver supports unencrypted
-DNS, as is traditionally sent over UDP port 53 and TCP port 53. In that case,
-the sum of IPv4 Address Count and IPv6 Address Count <span class="bcp14">MUST</span> be nonzero. If
-Authentication Domain Name is empty, the "alpn" and "no-default-alpn" service
-parameter <span class="bcp14">MUST</span> be omitted.<a href="#section-2.2-5.2.1" class="pilcrow">¶</a></p>
+DNS, as is traditionally sent over UDP port 53. In that case, the sum of IPv4
+Address Count and IPv6 Address Count <span class="bcp14">MUST</span> be nonzero. If Authentication
+Domain Name is empty, the "alpn" and "no-default-alpn" service parameter <span class="bcp14">MUST</span>
+be omitted.<a href="#section-2.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-2.2-5.3">
             <p id="section-2.2-5.3.1">The "dohpath" service parameter is used to convey a relative DNS over HTTPS

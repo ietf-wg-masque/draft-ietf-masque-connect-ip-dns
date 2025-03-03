@@ -114,8 +114,7 @@ Table of Contents
    information about nameservers, such as which encrypted DNS transport
    is supported.  This allows support for DNS over HTTPS ([DoH]), DNS
    over QUIC ([DoQ]), DNS over TLS ([DoT]), unencrypted DNS over UDP
-   port 53 and TCP port 53 ([DNS]), as well as potential future DNS
-   transports.
+   port 53 ([DNS]), and potential future DNS transports.
 
 1.1.  Conventions and Definitions
 
@@ -202,7 +201,7 @@ Table of Contents
    Authentication Domain Name:  A Domain structure (see Section 2.2)
       representing the domain name of the nameserver.  This MAY be empty
       if the nameserver only supports unencrypted DNS (as traditionally
-      sent over UDP port 53 and TCP port 53).
+      sent over UDP port 53).
 
    Service Parameters Length:  Length of the following Service
       Parameters field, encoded as a variable-length integer.
@@ -222,10 +221,10 @@ Table of Contents
       DNS transports are supported by this nameserver.  If the "no-
       default-alpn" service parameter is omitted, that indicates that
       the nameserver supports unencrypted DNS, as is traditionally sent
-      over UDP port 53 and TCP port 53.  In that case, the sum of IPv4
-      Address Count and IPv6 Address Count MUST be nonzero.  If
-      Authentication Domain Name is empty, the "alpn" and "no-default-
-      alpn" service parameter MUST be omitted.
+      over UDP port 53.  In that case, the sum of IPv4 Address Count and
+      IPv6 Address Count MUST be nonzero.  If Authentication Domain Name
+      is empty, the "alpn" and "no-default-alpn" service parameter MUST
+      be omitted.
 
    *  The "dohpath" service parameter is used to convey a relative DNS
       over HTTPS URI Template, see Section 5 of [SVCB-DNS].
