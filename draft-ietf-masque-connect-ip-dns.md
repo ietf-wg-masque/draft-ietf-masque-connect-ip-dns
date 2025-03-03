@@ -40,6 +40,16 @@ author:
     code: 94043
     country: United States of America
     email: dschinazi.ietf@gmail.com
+  -
+    ins: Y. Rosomakho
+    name: Yaroslav Rosomakho
+    org: Zscaler
+    street: 120 Holger Way
+    city: San Jose
+    region: CA
+    code: 95134
+    country: United States of America
+    email: yrosomakho@zscaler.com
 normative:
 informative:
 
@@ -435,6 +445,6 @@ Notes:
 {:numbered="false"}
 
 The mechanism in this document was inspired by {{IKEv2}},
-{{?IKEv2-DNS=RFC8598}}, and {{?IKEv2-SVCB=RFC9464}}. The author would like to
+{{?IKEv2-DNS=RFC8598}}, and {{?IKEv2-SVCB=RFC9464}}. The authors would like to
 thank {{{Alex Chernyakhovsky}}}, {{{Tommy Pauly}}}, and other enthusiasts in
 the MASQUE Working Group for their contributions.
