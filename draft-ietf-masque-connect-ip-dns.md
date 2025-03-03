@@ -78,8 +78,9 @@ DNS queries or responses, only a mechanism to exchange DNS configuration
 information.
 
 Note that this extension is meant for cases where connect-ip is used like a
-Remote Access VPN (see {{Section 8.1 of CONNECT-IP}}), but not for cases like
-IP Flow Forwarding (see {{Section 8.3 of CONNECT-IP}}).
+Remote Access VPN (see {{Section 8.1 of CONNECT-IP}}) or Site-to-Site VPN
+(see {{Section 8.2 of CONNECT-IP}}), but not for cases like IP Flow Forwarding
+(see {{Section 8.3 of CONNECT-IP}}).
 
 This specification uses Service Bindings ({{!SVCB=RFC9460}}) to exchange
 information about nameservers, such as which encrypted DNS transport is
