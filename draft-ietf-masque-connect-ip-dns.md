@@ -22,6 +22,7 @@ keyword:
   - http
   - datagram
   - udp
+  - tcp
   - proxy
   - tunnels
   - quic in quic
@@ -74,7 +75,8 @@ This specification uses Service Bindings ({{!SVCB=RFC9460}}) to exchange
 information about nameservers, such as which encrypted DNS transport is
 supported. This allows support for DNS over HTTPS ({{!DoH=RFC8484}}), DNS over
 QUIC ({{!DoQ=RFC9250}}), DNS over TLS ({{!DoT=RFC7858}}), unencrypted DNS over
-UDP port 53 ({{!DNS=RFC1035}}), and potential future DNS transports.
+UDP port 53 and TCP port 53 ({{!DNS=RFC1035}}), as well as potential future DNS
+transports.
 
 ## Conventions and Definitions
 
@@ -171,7 +173,7 @@ Authentication Domain Name:
 
 : A Domain structure (see {{domain-struct}}) representing the domain name of
 the nameserver. This MAY be empty if the nameserver only supports unencrypted
-DNS (as traditionally sent over UDP port 53).
+DNS (as traditionally sent over UDP port 53 and TCP port 53).
 
 Service Parameters Length:
 
@@ -192,10 +194,10 @@ Service parameters allow exchanging additional information about the nameserver:
 * The "alpn" service parameter is used to indicate which encrypted DNS
   transports are supported by this nameserver. If the "no-default-alpn" service
   parameter is omitted, that indicates that the nameserver supports unencrypted
-  DNS, as is traditionally sent over UDP port 53. In that case, the sum of IPv4
-  Address Count and IPv6 Address Count MUST be nonzero. If Authentication
-  Domain Name is empty, the "alpn" and "no-default-alpn" service parameter MUST
-  be omitted.
+  DNS, as is traditionally sent over UDP port 53 and TCP port 53. In that case,
+  the sum of IPv4 Address Count and IPv6 Address Count MUST be nonzero. If
+  Authentication Domain Name is empty, the "alpn" and "no-default-alpn" service
+  parameter MUST be omitted.
 
 * The "dohpath" service parameter is used to convey a relative DNS over HTTPS
   URI Template, see {{Section 5 of !SVCB-DNS=RFC9461}}.
