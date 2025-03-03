@@ -4,8 +4,9 @@
 
 MASQUE                                                       D. Schinazi
 Internet-Draft                                                Google LLC
-Intended status: Standards Track                        11 November 2024
-Expires: 15 May 2025
+Intended status: Standards Track                            Y. Rosomakho
+Expires: 4 September 2025                                        Zscaler
+                                                            3 March 2025
 
 
                DNS Configuration for Proxying IP in HTTP
@@ -55,11 +56,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 May 2025.
+   This Internet-Draft will expire on 4 September 2025.
 
 Copyright Notice
 
-   Copyright (c) 2024 IETF Trust and the persons identified as the
+   Copyright (c) 2025 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -91,7 +92,7 @@ Table of Contents
      7.1.  Normative References
      7.2.  Informative References
    Acknowledgments
-   Author's Address
+   Authors' Addresses
 
 1.  Introduction
 
@@ -113,7 +114,8 @@ Table of Contents
    information about nameservers, such as which encrypted DNS transport
    is supported.  This allows support for DNS over HTTPS ([DoH]), DNS
    over QUIC ([DoQ]), DNS over TLS ([DoT]), unencrypted DNS over UDP
-   port 53 ([DNS]), and potential future DNS transports.
+   port 53 and TCP port 53 ([DNS]), as well as potential future DNS
+   transports.
 
 1.1.  Conventions and Definitions
 
@@ -200,7 +202,7 @@ Table of Contents
    Authentication Domain Name:  A Domain structure (see Section 2.2)
       representing the domain name of the nameserver.  This MAY be empty
       if the nameserver only supports unencrypted DNS (as traditionally
-      sent over UDP port 53).
+      sent over UDP port 53 and TCP port 53).
 
    Service Parameters Length:  Length of the following Service
       Parameters field, encoded as a variable-length integer.
@@ -220,10 +222,10 @@ Table of Contents
       DNS transports are supported by this nameserver.  If the "no-
       default-alpn" service parameter is omitted, that indicates that
       the nameserver supports unencrypted DNS, as is traditionally sent
-      over UDP port 53.  In that case, the sum of IPv4 Address Count and
-      IPv6 Address Count MUST be nonzero.  If Authentication Domain Name
-      is empty, the "alpn" and "no-default-alpn" service parameter MUST
-      be omitted.
+      over UDP port 53 and TCP port 53.  In that case, the sum of IPv4
+      Address Count and IPv6 Address Count MUST be nonzero.  If
+      Authentication Domain Name is empty, the "alpn" and "no-default-
+      alpn" service parameter MUST be omitted.
 
    *  The "dohpath" service parameter is used to convey a relative DNS
       over HTTPS URI Template, see Section 5 of [SVCB-DNS].
@@ -528,11 +530,11 @@ Table of Contents
 Acknowledgments
 
    The mechanism in this document was inspired by [IKEv2], [IKEv2-DNS],
-   and [IKEv2-SVCB].  The author would like to thank Alex
+   and [IKEv2-SVCB].  The authors would like to thank Alex
    Chernyakhovsky, Tommy Pauly, and other enthusiasts in the MASQUE
    Working Group for their contributions.
 
-Author's Address
+Authors' Addresses
 
    David Schinazi
    Google LLC
@@ -540,3 +542,11 @@ Author's Address
    Mountain View, CA 94043
    United States of America
    Email: dschinazi.ietf@gmail.com
+
+
+   Yaroslav Rosomakho
+   Zscaler
+   120 Holger Way
+   San Jose, CA 95134
+   United States of America
+   Email: yrosomakho@zscaler.com
