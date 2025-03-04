@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-02T00:48:59.143254+00:00",
+  "timestamp": "2025-03-04T00:45:36.511179+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-connect-ip-dns",
   "labels": [
     {
@@ -147,5 +147,132 @@
       "comments": []
     }
   ],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 6,
+      "id": "PR_kwDOLfqCJc6NI3Ot",
+      "title": "Added co-author",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-connect-ip-dns/pull/6",
+      "state": "MERGED",
+      "author": "yaroslavros",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Added myself co-author as discussed",
+      "createdAt": "2025-03-03T11:35:17Z",
+      "updatedAt": "2025-03-03T19:59:51Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-connect-ip-dns",
+      "baseRefName": "main",
+      "baseRefOid": "3ae3ec3214697d5c8b00e3ddc03b4039b15a6de8",
+      "headRepository": "yaroslavros/draft-ietf-masque-connect-ip-dns",
+      "headRefName": "co-author",
+      "headRefOid": "95f34dc95690a9af17de404d69620e9b5ee6e1ad",
+      "closedAt": "2025-03-03T19:59:51Z",
+      "mergedAt": "2025-03-03T19:59:51Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "b3a0c5c07523c68c5d05f13dc3a6d9ac890a2609"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOLfqCJc6eQol8",
+          "commit": {
+            "abbreviatedOid": "95f34dc"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-03-03T19:59:17Z",
+          "updatedAt": "2025-03-03T19:59:17Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDOLfqCJc6NI6nQ",
+      "title": "Traditional DNS travels on both UDP and TCP",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-connect-ip-dns/pull/7",
+      "state": "MERGED",
+      "author": "yaroslavros",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "As discussed, added TCP port 53 as a valid transport option for traditional unencrypted DNS.",
+      "createdAt": "2025-03-03T11:42:01Z",
+      "updatedAt": "2025-03-03T20:00:21Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-connect-ip-dns",
+      "baseRefName": "main",
+      "baseRefOid": "3ae3ec3214697d5c8b00e3ddc03b4039b15a6de8",
+      "headRepository": "yaroslavros/draft-ietf-masque-connect-ip-dns",
+      "headRefName": "udp-tcp",
+      "headRefOid": "07eeb21ac55c6a6dd369ebefbe8491564b6ab324",
+      "closedAt": "2025-03-03T20:00:21Z",
+      "mergedAt": "2025-03-03T20:00:21Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "d9f7ce2d6ae19af6a4cb68255b0e8e0ed3cee222"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOLfqCJc6eQonL",
+          "commit": {
+            "abbreviatedOid": "07eeb21"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-03-03T19:59:20Z",
+          "updatedAt": "2025-03-03T19:59:20Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDOLfqCJc6NI9SI",
+      "title": "Added site-to-site applicability",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-connect-ip-dns/pull/8",
+      "state": "MERGED",
+      "author": "yaroslavros",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "DNS relay information exchange in a Site-to-site VPN setup is a perfectly use case for this spec.\r\nLater we may need to elaborate further on how this is supposed to work.",
+      "createdAt": "2025-03-03T11:47:13Z",
+      "updatedAt": "2025-03-03T20:00:40Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-connect-ip-dns",
+      "baseRefName": "main",
+      "baseRefOid": "3ae3ec3214697d5c8b00e3ddc03b4039b15a6de8",
+      "headRepository": "yaroslavros/draft-ietf-masque-connect-ip-dns",
+      "headRefName": "site-to-site",
+      "headRefOid": "ede66ffa6fc54789bc2d5c5d5b21fde88b2e42e8",
+      "closedAt": "2025-03-03T20:00:40Z",
+      "mergedAt": "2025-03-03T20:00:40Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "2d004ab11b1137c9cdee1e02c3e530531db657e6"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOLfqCJc6eQosg",
+          "commit": {
+            "abbreviatedOid": "ede66ff"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-03-03T19:59:23Z",
+          "updatedAt": "2025-03-03T19:59:23Z",
+          "comments": []
+        }
+      ]
+    }
+  ]
 }
