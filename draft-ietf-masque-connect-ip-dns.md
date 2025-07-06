@@ -107,11 +107,9 @@ resolver as defined in {{Section 6 of !DNS-TERMS=RFC8499}}, and the term
 
 Similar to how Proxying IP in HTTP exchanges IP address configuration
 information ({{Section 4.7 of CONNECT-IP}}), this mechanism leverages capsules
-to request DNS configuration information and to assign it. Similarly, this
-mechanism is bidirectional: either endpoint can request DNS configuration
-information by sending a DNS_REQUEST capsule, and either endpoint can send DNS
-configuration information in a DNS_ASSIGN capsule. These capsules follow the
-format defined below.
+to signal DNS configuration information. Similarly, this mechanism is
+bidirectional: either endpoint can send DNS configuration information in a
+`DNS_ASSIGN` capsule. The capsule format is defined below.
 
 ## Domain Structure
 
@@ -220,7 +218,6 @@ Service parameters allow exchanging additional information about the nameserver:
 
 ~~~
 DNS Configuration {
-  Request ID (i),
   Nameserver Count (i),
   Nameserver (..) ...,
   Internal Domain Count (i),
@@ -232,15 +229,6 @@ DNS Configuration {
 {: #assigned-addr-format title="Assigned Address Format"}
 
 Each DNS Configuration contains the following fields:
-
-Request ID:
-
-: Request identifier, encoded as a variable-length integer. If this DNS
-Configuration is part of a request, then this contains a unique request
-identifier. If this DNS configuration is part of an assignment that is in
-response to a DNS configuration request then this field SHALL contain the value
-of the corresponding field in the request. If this DNS configuration is part of
-an unsolicited assignment, this field SHALL be zero.
 
 Nameserver Count:
 
@@ -270,33 +258,6 @@ Search Domain:
 : A series of Domain structures representing search domains.
 {:newline="true" spacing="normal"}
 
-## DNS_REQUEST Capsule {#dns-req}
-
-The DNS_REQUEST capsule (see {{iana}} for the value of the capsule type) allows
-an endpoint to request DNS configuration from its peer. The capsule allows the
-endpoint to optionally indicate a preference for which DNS configuration it
-would get assigned. The sender can indicate that it has no preference by not
-sending any nameservers or domain names in its request DNS Configuration.
-
-~~~
-DNS_REQUEST Capsule {
-  Type (i) = DNS_REQUEST,
-  Length (i),
-  DNS Configuration (..),
-}
-~~~
-{: #dns-req-format title="DNS_REQUEST Capsule Format"}
-
-When sending a DNS_REQUEST capsule, the sender MUST generate and send a new
-non-zero request ID that was not previously used on this IP Proxying stream.
-Note that this request ID namespace is distinct from the one used by
-ADDRESS_ASSIGN capsules (see {{Section 4.7.1 of CONNECT-IP}}).
-
-An endpoint that receives a DNS_REQUEST capsule SHALL reply by sending a
-DNS_ASSIGN capsule with the corresponding request ID. That DNS_ASSIGN capsule
-MAY be empty, that indicates that its sender has no DNS configuration to share
-with its peer.
-
 ## DNS_ASSIGN Capsule {#dns-assign}
 
 The DNS_ASSIGN capsule (see {{iana}} for the value of the capsule type) allows
@@ -306,15 +267,17 @@ an endpoint to send DNS configuration to its peer.
 DNS_ASSIGN Capsule {
   Type (i) = DNS_ASSIGN,
   Length (i),
-  DNS Configuration (..),
+  DNS Configuration Count (i),
+  DNS Configuration (..) ...,
 }
 ~~~
 {: #dns-assign-format title="DNS_ASSIGN Capsule Format"}
 
-When sending a DNS_ASSIGN capsule in response to a received DNS_REQUEST
-capsule, the Request ID field in the DNS_ASSIGN capsule SHALL be set to the
-value in the received DNS_REQUEST capsule. Otherwise the request ID MUST be set
-to zero.
+DNS_ASSIGN capsule MAY include multiple DNS configurations if different DNS servers
+are responsible for separate internal domains.
+
+If multiple DNS_ASSIGN capsules are sent in one direction, each DNS_ASSIGN capsule
+supersedes prior ones.
 
 # Handling
 
@@ -341,7 +304,7 @@ connection.
 
 ## Full-Tunnel Consumer VPN
 
-A full-tunnel consumer VPN hosted at masque.example could configure the client
+A full-tunnel consumer VPN hosted at masque.example.org could configure the client
 to use DNS over HTTPS to the IP proxy itself by sending the following
 configuration.
 
@@ -351,7 +314,7 @@ DNS Configuration = {
     Service Priority = 1,
     IPv4 Address = [],
     IPv6 Address = [],
-    Authentication Domain Name = "masque.example",
+    Authentication Domain Name = "masque.example.org",
     Service Parameters = {
       alpn=h2,h3
       dohpath=/dns-query{?dns}
@@ -398,23 +361,16 @@ could break the privacy properties provided by the tunnel. To avoid this,
 implementations need to ensure that DNS_ASSIGN capsules are not sent before the
 corresponding ROUTE_ADVERTISEMENT capsule.
 
-The requirement for an endpoint to always send DNS_ASSIGN capsules in response
-to DNS_REQUEST capsules could lead it to buffer unbounded amounts of memory if
-the underlying stream is blocked by flow or congestion control. Implementations
-MUST place an upper bound on that buffering and abort the stream if that limit
-is reached.
-
 # IANA Considerations {#iana}
 
-This document, if approved, will request IANA add the following values to the
+This document, if approved, will request IANA add the following value to the
 "HTTP Capsule Types" registry maintained at
 <[](https://www.iana.org/assignments/masque)>.
 
 |   Value   | Capsule Type |
 |:----------|:-------------|
 | 0x818F79E |  DNS_ASSIGN  |
-| 0x818F79F |  DNS_REQUEST |
-{: #iana-capsules-table title="New Capsules"}
+{: #iana-capsules-table title="New Capsule"}
 
 Note that, if this document is approved, the values defined above will be
 replaced by smaller ones before publication.
