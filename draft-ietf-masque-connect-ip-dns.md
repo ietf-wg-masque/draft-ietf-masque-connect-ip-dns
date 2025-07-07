@@ -368,8 +368,8 @@ This document, if approved, will request IANA add the following value to the
 
 Value:
 
-: 0x1ACE79EC (if this document is approved, the values defined above will be
-replaced by smaller ones before publication)
+: 0x1ACE79EC (if this document is approved, this value will be
+replaced by a smaller one before publication)
 
 Capsule Type:
 
