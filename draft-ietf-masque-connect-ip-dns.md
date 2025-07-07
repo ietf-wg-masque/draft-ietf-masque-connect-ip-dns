@@ -267,7 +267,6 @@ an endpoint to send DNS configuration to its peer.
 DNS_ASSIGN Capsule {
   Type (i) = DNS_ASSIGN,
   Length (i),
-  DNS Configuration Count (i),
   DNS Configuration (..) ...,
 }
 ~~~
@@ -367,15 +366,14 @@ This document, if approved, will request IANA add the following value to the
 "HTTP Capsule Types" registry maintained at
 <[](https://www.iana.org/assignments/masque)>.
 
-|   Value   | Capsule Type |
-|:----------|:-------------|
-| 0x818F79E |  DNS_ASSIGN  |
-{: #iana-capsules-table title="New Capsule"}
+Value:
 
-Note that, if this document is approved, the values defined above will be
-replaced by smaller ones before publication.
+: 0x1ACE79EC (if this document is approved, the values defined above will be
+replaced by smaller ones before publication)
 
-All of these new entries use the following values for these fields:
+Capsule Type:
+
+: DNS_ASSIGN
 
 Status:
 
