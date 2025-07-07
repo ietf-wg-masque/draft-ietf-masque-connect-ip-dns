@@ -272,11 +272,11 @@ DNS_ASSIGN Capsule {
 ~~~
 {: #dns-assign-format title="DNS_ASSIGN Capsule Format"}
 
-DNS_ASSIGN capsule MAY include multiple DNS configurations if different DNS servers
-are responsible for separate internal domains.
+DNS_ASSIGN capsule MAY include multiple DNS configurations if different DNS
+servers are responsible for separate internal domains.
 
-If multiple DNS_ASSIGN capsules are sent in one direction, each DNS_ASSIGN capsule
-supersedes prior ones.
+If multiple DNS_ASSIGN capsules are sent in one direction, each DNS_ASSIGN
+capsule supersedes prior ones.
 
 # Handling
 
@@ -303,8 +303,8 @@ connection.
 
 ## Full-Tunnel Consumer VPN
 
-A full-tunnel consumer VPN hosted at masque.example.org could configure the client
-to use DNS over HTTPS to the IP proxy itself by sending the following
+A full-tunnel consumer VPN hosted at masque.example.org could configure the
+client to use DNS over HTTPS to the IP proxy itself by sending the following
 configuration.
 
 ~~~
