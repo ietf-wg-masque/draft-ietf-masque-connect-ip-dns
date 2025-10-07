@@ -362,36 +362,38 @@ DNS Configuration = {
 # PREF64 Configuration Mechanism
 
 This document defines a new capsule type, `PREF64`, that allows a CONNECT-IP peer
-to communicate the IPv6 NAT64 prefix to be used for IPv6/IPv4 address synthesis.
+to communicate the IPv6 NAT64 prefixes to be used for IPv6/IPv4 address synthesis.
 This information enables an endpoint operating in an IPv6-only environment to
 construct IPv4-reachable addresses from IPv6 literals when a NAT64 translator is in use.
 
 ## PREF64 Capsule
 
-Each PREF64 capsule conveys exactly one NAT64 prefix. If multiple capsules are sent
-in the same direction, the most recent one replaces any previously advertised prefix.
+Each PREF64 capsule conveys zero or more NAT64 prefixes. If multiple capsules are sent
+in the same direction, the most recent one replaces any previously advertised prefixes.
+Empty PREF64 capsule is used to inform that NAT64 prefixes are not available.
 
 The capsule has the following structure (see {{iana}} for the value of the capsule type):
 
 ~~~
 PREF64 Capsule {
   Type (i) = PREF64,
-  Length (i) = 13,
-  Prefix Length (8)
-  Prefix (96),
+  Length (i),
+  NAT64 Prefix (104) ...,
 }
 ~~~
 {: #pref64-format title="PREF64 Capsule Format"}
 
-PREF64 Capsule contains the following fields:
+Individual NAT64 prefix has the following structure
 
-Type:
+~~~
+NAT64 Prefix {
+  Prefix Length (8),
+  Prefix (96),
+}
+~~~
+{: #nat64-prefix title="NAT64 Prefix Format"}
 
-: PREF64 Capsule Type value encoded as a variable-length integer
-
-Length:
-
-: Length of the capsule encoded as a variable-length integer. PREF64 capsule length is always 13.
+NAT64 prefix fields are:
 
 Prefix Length:
 
@@ -406,19 +408,22 @@ Prefix:
 ## Handling
 
 Upon receiving a PREF64 capsule, a peer updates its local NAT64 configuration for the
-corresponding CONNECT-IP session. The newly received prefix overrides any previously
-received prefix in the same direction.
+corresponding CONNECT-IP session. The newly received prefixes overrides any previously
+received prefixes in the same direction. Emtpy PREF64 capsule invalidates any previously
+received prefixes.
 
 ## Example
 
-A CONNECT-IP peer would use the following capsule to signal NAT64 prefix of `64:ff9b::/96`
+A CONNECT-IP peer would use the following capsule to signal a single NAT64 prefix of `64:ff9b::/96`
 
 ~~~
 PREF64 Capsule {
   Type (i) = PREF64,
   Length (i) = 13,
-  Prefix Length (8) = 96
-  Prefix (96) = 0x00 0x64 0xff 0x9b 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00,
+  NAT64 Prefix {
+    Prefix Length (8) = 96
+    Prefix (96) = 0x00 0x64 0xff 0x9b 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00,
+  }
 }
 ~~~
 {: #ex-pref64 title="PREF64 Capsule Example"}
