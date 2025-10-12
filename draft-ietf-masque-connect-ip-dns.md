@@ -383,7 +383,7 @@ PREF64 Capsule {
 ~~~
 {: #pref64-format title="PREF64 Capsule Format"}
 
-Individual NAT64 prefix has the following structure
+Individual NAT64 prefix has the following structure:
 
 ~~~
 NAT64 Prefix {
