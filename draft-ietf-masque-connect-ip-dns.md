@@ -99,7 +99,7 @@ transports. PREF64 configuration is represented in a way similar to Router
 Advertisement option defined in {{Section 4 of ?PREF64-RA=RFC8781}}.
 
 Similar to how Proxying IP in HTTP exchanges IP address configuration
-information ({{Section 4.7 of CONNECT-IP}}), mechanism defined in this document
+information ({{Section 4.7 of CONNECT-IP}}), the mechanism defined in this document
 leverages capsules. Similarly, these mechanisms are bidirectional: either endpoint
 can send configuration information.
 
