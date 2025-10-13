@@ -411,8 +411,8 @@ separator or a suffix.
 ## Handling
 
 Upon receiving a PREF64 capsule, a peer updates its local NAT64 configuration for the
-corresponding CONNECT-IP session. The newly received PREF64 overrides any previously
-received PREF64 in the same direction.
+corresponding CONNECT-IP session. The newly received PREF64 capsule overrides any previously
+received PREF64 capsules in the same direction.
 
 If an endpoint receives a capsule that does not meet one of the requirements listed in {{pref64-capsule}}, or
 with a length that is not a multiple of 13 bytes, it MUST treat it as malformed. An empty
