@@ -96,7 +96,7 @@ supported. This allows support for DNS over HTTPS ({{!DoH=RFC8484}}), DNS over
 QUIC ({{!DoQ=RFC9250}}), DNS over TLS ({{!DoT=RFC7858}}), unencrypted DNS over
 UDP port 53 and TCP port 53 ({{!DNS=RFC1035}}), as well as potential future DNS
 transports. PREF64 configuration is represented in a way similar to Router
-Advertisement option defined in {{Section 4 of !PREF64-RA=RFC8781}}.
+Advertisement option defined in {{Section 4 of ?PREF64-RA=RFC8781}}.
 
 Similar to how Proxying IP in HTTP exchanges IP address configuration
 information ({{Section 4.7 of CONNECT-IP}}), mechanism defined in this document
@@ -378,20 +378,20 @@ The capsule has the following structure (see {{iana}} for the value of the capsu
 PREF64 Capsule {
   Type (i) = PREF64,
   Length (i),
-  NAT64 Prefix (104) ...,
+  NAT64 Address Format (104) ...,
 }
 ~~~
 {: #pref64-format title="PREF64 Capsule Format"}
 
-Individual NAT64 prefix has the following structure:
+Individual NAT64 address format has the following structure:
 
 ~~~
 NAT64 Prefix {
   Prefix Length (8),
-  Prefix (96),
+  IPv6 Address Format (96),
 }
 ~~~
-{: #nat64-prefix title="NAT64 Prefix Format"}
+{: #nat64-prefix title="NAT64 Address Format"}
 
 NAT64 prefix fields are:
 
@@ -401,16 +401,19 @@ Prefix Length:
 56, 64, and 96. These lengths correspond to the prefix sizes permitted for the IPv6-to-IPv4
 address synthesis algorithm described in {{Section 2.2 of !IPv6-TRANSLATOR=RFC6052}}.
 
-Prefix:
+IPv6 Address Format:
 
-: The highest 96 bits of the IPv6 prefix, encoded in network byte order.
+: Address prefix and suffix separated by 8 zero bits as defined in {{Section 2.2 of IPv6-TRANSLATOR}}.
+Note that this field is always 96 bits long, regardless of the value in the Prefix Length field
+preceding it. If Prefix Length is set to 96, the IPv6 Address Format consists of the prefix without a
+separator or a suffix.
 
 ## Handling
 
 Upon receiving a PREF64 capsule, a peer updates its local NAT64 configuration for the
-corresponding CONNECT-IP session. The newly received prefixes overrides any previously
-received prefixes in the same direction. Emtpy PREF64 capsule invalidates any previously
-received prefixes.
+corresponding CONNECT-IP session. The newly received PREF64 overrides any previously
+received PREF64 in the same direction. Emtpy PREF64 capsule invalidates any previously
+received NAT64 Address Formats.
 
 ## Example
 
@@ -422,7 +425,7 @@ PREF64 Capsule {
   Length (i) = 13,
   NAT64 Prefix {
     Prefix Length (8) = 96
-    Prefix (96) = 0x00 0x64 0xff 0x9b 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00,
+    IPv6 Address Format (96) = 0x00 0x64 0xff 0x9b 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00,
   }
 }
 ~~~
