@@ -378,20 +378,20 @@ The capsule has the following structure (see {{iana}} for the value of the capsu
 PREF64 Capsule {
   Type (i) = PREF64,
   Length (i),
-  NAT64 Address Format (104) ...,
+  NAT64 Prefix (104) ...,
 }
 ~~~
 {: #pref64-format title="PREF64 Capsule Format"}
 
-Individual NAT64 address format has the following structure:
+Individual NAT64 prefix has the following structure:
 
 ~~~
 NAT64 Prefix {
   Prefix Length (8),
-  IPv6 Address Format (96),
+  Prefix (96),
 }
 ~~~
-{: #nat64-prefix title="NAT64 Address Format"}
+{: #nat64-prefix title="NAT64 Prefix Format"}
 
 NAT64 prefix fields are:
 
@@ -401,12 +401,11 @@ Prefix Length:
 56, 64, and 96. These lengths correspond to the prefix sizes permitted for the IPv6-to-IPv4
 address synthesis algorithm described in {{Section 2.2 of !IPv6-TRANSLATOR=RFC6052}}.
 
-IPv6 Address Format:
+Prefix:
 
-: Address prefix and suffix separated by 8 zero bits as defined in {{Section 2.2 of IPv6-TRANSLATOR}}.
-Note that this field is always 96 bits long, regardless of the value in the Prefix Length field
-preceding it. If Prefix Length is set to 96, the IPv6 Address Format consists of the prefix without a
-separator or a suffix.
+: The highest 96 bits of the IPv6 prefix, encoded in network byte order. Note that this field is
+always 96 bits long, regardless of the value in the Prefix Length field
+preceding it, see {{Section 2.2 of !IPv6-TRANSLATOR}} for details.
 
 ## Handling
 
@@ -416,7 +415,7 @@ received PREF64 capsules in the same direction.
 
 If an endpoint receives a capsule that does not meet one of the requirements listed in {{pref64-capsule}}, or
 with a length that is not a multiple of 13 bytes, it MUST treat it as malformed. An empty
-PREF64 capsule invalidates any previously received NAT64 Address Formats.
+PREF64 capsule invalidates any previously received NAT64 Prefixes.
 
 ## Example
 
@@ -428,7 +427,7 @@ PREF64 Capsule {
   Length (i) = 13,
   NAT64 Prefix {
     Prefix Length (8) = 96
-    IPv6 Address Format (96) = 0x00 0x64 0xff 0x9b 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00,
+    Prefix (96) = 0x00 0x64 0xff 0x9b 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00,
   }
 }
 ~~~
