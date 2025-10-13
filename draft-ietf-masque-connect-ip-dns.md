@@ -366,7 +366,7 @@ to communicate the IPv6 NAT64 prefixes to be used for IPv6/IPv4 address synthesi
 This information enables an endpoint operating in an IPv6-only environment to
 construct IPv4-reachable addresses from IPv6 literals when a NAT64 translator is in use.
 
-## PREF64 Capsule
+## PREF64 Capsule {#pref64-capsule}
 
 Each PREF64 capsule conveys zero or more NAT64 prefixes. If multiple capsules are sent
 in the same direction, the most recent one replaces any previously advertised prefixes.
@@ -412,8 +412,11 @@ separator or a suffix.
 
 Upon receiving a PREF64 capsule, a peer updates its local NAT64 configuration for the
 corresponding CONNECT-IP session. The newly received PREF64 overrides any previously
-received PREF64 in the same direction. Emtpy PREF64 capsule invalidates any previously
-received NAT64 Address Formats.
+received PREF64 in the same direction.
+
+If an endpoint receives a capsule that does not meet one of the requirements listed in {{pref64-capsule}}, or
+with a length that is not a multiple of 13 bytes, it MUST treat it as malformed. Emtpy
+PREF64 capsule invalidates any previously received NAT64 Address Formats.
 
 ## Example
 
