@@ -415,7 +415,7 @@ corresponding CONNECT-IP session. The newly received PREF64 overrides any previo
 received PREF64 in the same direction.
 
 If an endpoint receives a capsule that does not meet one of the requirements listed in {{pref64-capsule}}, or
-with a length that is not a multiple of 13 bytes, it MUST treat it as malformed. Emtpy
+with a length that is not a multiple of 13 bytes, it MUST treat it as malformed. An empty
 PREF64 capsule invalidates any previously received NAT64 Address Formats.
 
 ## Example
