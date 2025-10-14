@@ -1,6 +1,6 @@
 ---
-title: "DNS Configuration for Proxying IP in HTTP"
-abbrev: "CONNECT-IP DNS"
+title: "DNS and PREF64 Configuration for Proxying IP in HTTP"
+abbrev: "CONNECT-IP DNS and PREF64"
 category: std
 docname: draft-ietf-masque-connect-ip-dns-latest
 submissiontype: IETF
@@ -57,39 +57,53 @@ informative:
 --- abstract
 
 Proxying IP in HTTP allows building a VPN through HTTP load balancers. However,
-at the time of writing, that mechanism doesn't offer a mechanism for
-communicating DNS configuration information inline. In contrast, most existing
-VPN protocols provide a mechanism to exchange DNS configuration information.
-This document describes an extension that exchanges this information using HTTP
-capsules. This mechanism supports encrypted DNS transports.
+at the time of writing, that mechanism lacks a way to communicate network
+configuration details such as DNS information or IPv6 NAT64 prefixes (PREF64).
+In contrast, most existing VPN protocols provide mechanisms to exchange
+such configuration information.
+
+This document defines extensions that convey DNS and PREF64 configuration
+using HTTP capsules. This mechanism supports encrypted DNS transports
+and can be used to inform peers about network translation prefixes for IPv6/IPv4
+synthesis.
 
 --- middle
 
 # Introduction
 
 Proxying IP in HTTP ({{!CONNECT-IP=RFC9484}}) allows building a VPN through
-HTTP load balancers. However, at the time of writing, that mechanism doesn't
-offer a mechanism for communicating DNS configuration information inline. In
-contrast, most existing VPN protocols provide a mechanism to exchange DNS
-configuration information (e.g., {{?IKEv2=RFC7296}}). This document describes
-an extension that exchanges this information using HTTP capsules
-({{!HTTP-DGRAM=RFC9297}}). This document does not define any new ways to convey
-DNS queries or responses, only a mechanism to exchange DNS configuration
-information.
+HTTP load balancers. However, at the time of writing, that mechanism lacks
+a way to communicate network configuration details such as DNS information
+or IPv6 NAT64 prefixes (PREF64). In contrast, most existing VPN protocols provide
+mechanisms to exchange such configuration information (for example
+{{?IKEv2=RFC7296}} supports discovery of DNS servers).
 
-Note that this extension is meant for cases where connect-ip is used like a
-Remote Access VPN (see {{Section 8.1 of CONNECT-IP}}) or Site-to-Site VPN
+This document defines extensions that allow CONNECT-IP peers to convey DNS
+and PREF64 configuration information to its peer using HTTP capsules
+({{!HTTP-DGRAM=RFC9297}}). These extensions do not define any new way to
+transport DNS queries or responses, but instead enable the exchange of DNS
+resolver configuration and NAT64 prefix information inline with CONNECT-IP
+sessions.
+
+Note that these extensions are meant for cases where CONNECT-IP operates as a
+Remote Access VPN (see {{Section 8.1 of CONNECT-IP}}) or a Site-to-Site VPN
 (see {{Section 8.2 of CONNECT-IP}}), but not for cases like IP Flow Forwarding
 (see {{Section 8.3 of CONNECT-IP}}).
 
-This specification uses Service Bindings ({{!SVCB=RFC9460}}) to exchange
-information about nameservers, such as which encrypted DNS transport is
+For DNS configuration, this specification uses Service Bindings ({{!SVCB=RFC9460}})
+to exchange information about nameservers, such as which encrypted DNS transport is
 supported. This allows support for DNS over HTTPS ({{!DoH=RFC8484}}), DNS over
 QUIC ({{!DoQ=RFC9250}}), DNS over TLS ({{!DoT=RFC7858}}), unencrypted DNS over
 UDP port 53 and TCP port 53 ({{!DNS=RFC1035}}), as well as potential future DNS
-transports.
+transports. PREF64 configuration is represented in a way similar to Router
+Advertisement option defined in {{Section 4 of ?PREF64-RA=RFC8781}}.
 
-## Conventions and Definitions
+Similar to how Proxying IP in HTTP exchanges IP address configuration
+information ({{Section 4.7 of CONNECT-IP}}), the mechanism defined in this document
+leverages capsules. Similarly, these mechanisms are bidirectional: either endpoint
+can send configuration information.
+
+# Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
@@ -103,12 +117,9 @@ In this document, we use the term "nameserver" to refer to a DNS recursive
 resolver as defined in {{Section 6 of !DNS-TERMS=RFC8499}}, and the term
 "domain name" is used as defined in {{Section 2 of !DNS-TERMS}}.
 
-# Mechanism
+# DNS Configuration Mechanism
 
-Similar to how Proxying IP in HTTP exchanges IP address configuration
-information ({{Section 4.7 of CONNECT-IP}}), this mechanism leverages capsules
-to signal DNS configuration information. Similarly, this mechanism is
-bidirectional: either endpoint can send DNS configuration information in a
+Either endpoint can send DNS configuration information in a
 `DNS_ASSIGN` capsule. The capsule format is defined below.
 
 ## Domain Structure
@@ -278,7 +289,7 @@ servers are responsible for separate internal domains.
 If multiple DNS_ASSIGN capsules are sent in one direction, each DNS_ASSIGN
 capsule supersedes prior ones.
 
-# Handling
+## Handling
 
 Note that internal domains include subdomains. In other words, if the DNS
 configuration contains a domain, that indicates that the corresponding domain
@@ -299,9 +310,9 @@ SHOULD send its DNS queries to that nameserver directly as independent HTTPS
 requests. When possible, those requests SHOULD be coalesced over the same HTTPS
 connection.
 
-# Examples
+## Examples
 
-## Full-Tunnel Consumer VPN
+### Full-Tunnel Consumer VPN
 
 A full-tunnel consumer VPN hosted at masque.example.org could configure the
 client to use DNS over HTTPS to the IP proxy itself by sending the following
@@ -325,7 +336,7 @@ DNS Configuration = {
 ~~~
 {: #ex-doh title="Full Tunnel Example"}
 
-## Split-Tunnel Enterprise VPN
+### Split-Tunnel Enterprise VPN
 
 An enterprise switching their preexisting IKEv2/IPsec split-tunnel VPN to
 connect-ip could use the following configuration.
@@ -348,6 +359,80 @@ DNS Configuration = {
 ~~~
 {: #ex-split title="Split Tunnel Example"}
 
+# PREF64 Configuration Mechanism
+
+This document defines a new capsule type, `PREF64`, that allows a CONNECT-IP peer
+to communicate the IPv6 NAT64 prefixes to be used for IPv6/IPv4 address synthesis.
+This information enables an endpoint operating in an IPv6-only environment to
+construct IPv4-reachable addresses from IPv6 literals when a NAT64 translator is in use.
+
+## PREF64 Capsule {#pref64-capsule}
+
+Each PREF64 capsule conveys zero or more NAT64 prefixes. If multiple capsules are sent
+in the same direction, the most recent one replaces any previously advertised prefixes.
+Empty PREF64 capsule is used to inform that NAT64 prefixes are not available.
+
+The capsule has the following structure (see {{iana}} for the value of the capsule type):
+
+~~~
+PREF64 Capsule {
+  Type (i) = PREF64,
+  Length (i),
+  NAT64 Prefix (104) ...,
+}
+~~~
+{: #pref64-format title="PREF64 Capsule Format"}
+
+Individual NAT64 prefix has the following structure:
+
+~~~
+NAT64 Prefix {
+  Prefix Length (8),
+  Prefix (96),
+}
+~~~
+{: #nat64-prefix title="NAT64 Prefix Format"}
+
+NAT64 prefix fields are:
+
+Prefix Length:
+
+: The length of the NAT64 prefix in bits encoded as a single byte. Valid values are 32, 40, 48,
+56, 64, and 96. These lengths correspond to the prefix sizes permitted for the IPv6-to-IPv4
+address synthesis algorithm described in {{Section 2.2 of !IPv6-TRANSLATOR=RFC6052}}.
+
+Prefix:
+
+: The highest 96 bits of the IPv6 prefix, encoded in network byte order. Note that this field is
+always 96 bits long, regardless of the value in the Prefix Length field
+preceding it, see {{Section 2.2 of !IPv6-TRANSLATOR}} for details.
+
+## Handling
+
+Upon receiving a PREF64 capsule, a peer updates its local NAT64 configuration for the
+corresponding CONNECT-IP session. The newly received PREF64 capsule overrides any previously
+received PREF64 capsules in the same direction.
+
+If an endpoint receives a capsule that does not meet one of the requirements listed in {{pref64-capsule}}, or
+with a length that is not a multiple of 13 bytes, it MUST treat it as malformed. An empty
+PREF64 capsule invalidates any previously received NAT64 Prefixes.
+
+## Example
+
+A CONNECT-IP peer would use the following capsule to signal a single NAT64 prefix of `64:ff9b::/96`
+
+~~~
+PREF64 Capsule {
+  Type (i) = PREF64,
+  Length (i) = 13,
+  NAT64 Prefix {
+    Prefix Length (8) = 96
+    Prefix (96) = 0x00 0x64 0xff 0x9b 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00,
+  }
+}
+~~~
+{: #ex-pref64 title="PREF64 Capsule Example"}
+
 # Security Considerations
 
 Acting on received DNS_ASSIGN capsules can have significant impact on endpoint
@@ -362,18 +447,19 @@ corresponding ROUTE_ADVERTISEMENT capsule.
 
 # IANA Considerations {#iana}
 
-This document, if approved, will request IANA add the following value to the
+This document, if approved, will request IANA add the following values to the
 "HTTP Capsule Types" registry maintained at
 <[](https://www.iana.org/assignments/masque)>.
 
-Value:
+| Value | Capsule Type |
+| --- | --- |
+| 0x1ACE79EC (if this document is approved, this value will be
+replaced by a smaller one before publication) | DNS_ASSIGN |
+| 0x274C0FBC (if this document is approved, this value will be
+replaced by a smaller one before publication) | PREF64 |
 
-: 0x1ACE79EC (if this document is approved, this value will be
-replaced by a smaller one before publication)
 
-Capsule Type:
-
-: DNS_ASSIGN
+All of these new entries use the following values for these fields:
 
 Status:
 
