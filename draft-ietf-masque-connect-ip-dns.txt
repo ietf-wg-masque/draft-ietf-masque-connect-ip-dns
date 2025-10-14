@@ -258,7 +258,7 @@ Table of Contents
      Search Domain (..) ...,
    }
 
-                     Figure 3: Assigned Address Format
+                     Figure 3: DNS Configuration Format
 
    Each DNS Configuration contains the following fields:
 
