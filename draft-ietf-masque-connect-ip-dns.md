@@ -237,7 +237,7 @@ DNS Configuration {
   Search Domain (..) ...,
 }
 ~~~
-{: #assigned-addr-format title="Assigned Address Format"}
+{: #dns-configuration title="DNS Configuration Format"}
 
 Each DNS Configuration contains the following fields:
 
