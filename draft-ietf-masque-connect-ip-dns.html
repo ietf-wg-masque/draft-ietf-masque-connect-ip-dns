@@ -4,18 +4,21 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>DNS Configuration for Proxying IP in HTTP</title>
+<title>DNS and PREF64 Configuration for Proxying IP in HTTP</title>
 <meta content="David Schinazi" name="author">
 <meta content="Yaroslav Rosomakho" name="author">
 <meta content="
        Proxying IP in HTTP allows building a VPN through HTTP load balancers. However,
-at the time of writing, that mechanism doesn't offer a mechanism for
-communicating DNS configuration information inline. In contrast, most existing
-VPN protocols provide a mechanism to exchange DNS configuration information.
-This document describes an extension that exchanges this information using HTTP
-capsules. This mechanism supports encrypted DNS transports. 
+at the time of writing, that mechanism lacks a way to communicate network
+configuration details such as DNS information or IPv6 NAT64 prefixes (PREF64).
+In contrast, most existing VPN protocols provide mechanisms to exchange
+such configuration information. 
+       This document defines extensions that convey DNS and PREF64 configuration
+using HTTP capsules. This mechanism supports encrypted DNS transports
+and can be used to inform peers about network translation prefixes for IPv6/IPv4
+synthesis. 
     " name="description">
-<meta content="xml2rfc 3.29.0" name="generator">
+<meta content="xml2rfc 3.30.2" name="generator">
 <meta content="quic" name="keyword">
 <meta content="http" name="keyword">
 <meta content="datagram" name="keyword">
@@ -30,19 +33,19 @@ capsules. This mechanism supports encrypted DNS transports.
 <meta content="dns" name="keyword">
 <meta content="draft-ietf-masque-connect-ip-dns-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.29.0
+  xml2rfc 3.30.2
     Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
     Jinja2 3.1.6
     lxml 5.3.1
-    platformdirs 4.3.8
+    platformdirs 4.4.0
     pycountry 24.6.1
     PyYAML 6.0.2
-    requests 2.32.4
+    requests 2.32.5
     setuptools 80.9.0
-    wcwidth 0.2.13
+    wcwidth 0.2.14
 -->
 <link href="draft-ietf-masque-connect-ip-dns.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1060,12 +1063,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="center">CONNECT-IP DNS</td>
-<td class="right">July 2025</td>
+<td class="center">CONNECT-IP DNS and PREF64</td>
+<td class="right">October 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Schinazi &amp; Rosomakho</td>
-<td class="center">Expires 8 January 2026</td>
+<td class="center">Expires 17 April 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1078,12 +1081,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-masque-connect-ip-dns-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-07-07" class="published">7 July 2025</time>
+<time datetime="2025-10-14" class="published">14 October 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-01-08">8 January 2026</time></dd>
+<dd class="expires"><time datetime="2026-04-17">17 April 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1097,15 +1100,18 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </dd>
 </dl>
 </div>
-<h1 id="title">DNS Configuration for Proxying IP in HTTP</h1>
+<h1 id="title">DNS and PREF64 Configuration for Proxying IP in HTTP</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">Proxying IP in HTTP allows building a VPN through HTTP load balancers. However,
-at the time of writing, that mechanism doesn't offer a mechanism for
-communicating DNS configuration information inline. In contrast, most existing
-VPN protocols provide a mechanism to exchange DNS configuration information.
-This document describes an extension that exchanges this information using HTTP
-capsules. This mechanism supports encrypted DNS transports.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+at the time of writing, that mechanism lacks a way to communicate network
+configuration details such as DNS information or IPv6 NAT64 prefixes (PREF64).
+In contrast, most existing VPN protocols provide mechanisms to exchange
+such configuration information.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">This document defines extensions that convey DNS and PREF64 configuration
+using HTTP capsules. This mechanism supports encrypted DNS transports
+and can be used to inform peers about network translation prefixes for IPv6/IPv4
+synthesis.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1142,7 +1148,7 @@ capsules. This mechanism supports encrypted DNS transports.<a href="#section-abs
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 8 January 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 17 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1173,40 +1179,52 @@ capsules. This mechanism supports encrypted DNS transports.<a href="#section-abs
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
-                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
-</li>
-            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-mechanism" class="internal xref">Mechanism</a></p>
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-dns-configuration-mechanism" class="internal xref">DNS Configuration Mechanism</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
-                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-domain-structure" class="internal xref">Domain Structure</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-domain-structure" class="internal xref">Domain Structure</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
-                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-nameserver-structure" class="internal xref">Nameserver Structure</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-nameserver-structure" class="internal xref">Nameserver Structure</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
-                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-dns-configuration-structure" class="internal xref">DNS Configuration Structure</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-dns-configuration-structure" class="internal xref">DNS Configuration Structure</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4">
-                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="auto internal xref">2.4</a>.  <a href="#name-dns_assign-capsule" class="internal xref">DNS_ASSIGN Capsule</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-dns_assign-capsule" class="internal xref">DNS_ASSIGN Capsule</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.5">
+                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-handling" class="internal xref">Handling</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.6">
+                <p id="section-toc.1-1.3.2.6.1"><a href="#section-3.6" class="auto internal xref">3.6</a>.  <a href="#name-examples" class="internal xref">Examples</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.6.2.1">
+                    <p id="section-toc.1-1.3.2.6.2.1.1"><a href="#section-3.6.1" class="auto internal xref">3.6.1</a>.  <a href="#name-full-tunnel-consumer-vpn" class="internal xref">Full-Tunnel Consumer VPN</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.6.2.2">
+                    <p id="section-toc.1-1.3.2.6.2.2.1"><a href="#section-3.6.2" class="auto internal xref">3.6.2</a>.  <a href="#name-split-tunnel-enterprise-vpn" class="internal xref">Split-Tunnel Enterprise VPN</a></p>
+</li>
+                </ul>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-handling" class="internal xref">Handling</a></p>
-</li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-examples" class="internal xref">Examples</a></p>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-pref64-configuration-mechan" class="internal xref">PREF64 Configuration Mechanism</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-full-tunnel-consumer-vpn" class="internal xref">Full-Tunnel Consumer VPN</a></p>
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-pref64-capsule" class="internal xref">PREF64 Capsule</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-split-tunnel-enterprise-vpn" class="internal xref">Split-Tunnel Enterprise VPN</a></p>
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-handling-2" class="internal xref">Handling</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-example" class="internal xref">Example</a></p>
 </li>
             </ul>
 </li>
@@ -1243,62 +1261,67 @@ capsules. This mechanism supports encrypted DNS transports.<a href="#section-abs
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
 <p id="section-1-1">Proxying IP in HTTP (<span>[<a href="#CONNECT-IP" class="cite xref">CONNECT-IP</a>]</span>) allows building a VPN through
-HTTP load balancers. However, at the time of writing, that mechanism doesn't
-offer a mechanism for communicating DNS configuration information inline. In
-contrast, most existing VPN protocols provide a mechanism to exchange DNS
-configuration information (e.g., <span>[<a href="#IKEv2" class="cite xref">IKEv2</a>]</span>). This document describes
-an extension that exchanges this information using HTTP capsules
-(<span>[<a href="#HTTP-DGRAM" class="cite xref">HTTP-DGRAM</a>]</span>). This document does not define any new ways to convey
-DNS queries or responses, only a mechanism to exchange DNS configuration
-information.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">Note that this extension is meant for cases where connect-ip is used like a
-Remote Access VPN (see <span><a href="https://rfc-editor.org/rfc/rfc9484#section-8.1" class="relref">Section 8.1</a> of [<a href="#CONNECT-IP" class="cite xref">CONNECT-IP</a>]</span>) or Site-to-Site VPN
+HTTP load balancers. However, at the time of writing, that mechanism lacks
+a way to communicate network configuration details such as DNS information
+or IPv6 NAT64 prefixes (PREF64). In contrast, most existing VPN protocols provide
+mechanisms to exchange such configuration information (for example
+<span>[<a href="#IKEv2" class="cite xref">IKEv2</a>]</span> supports discovery of DNS servers).<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This document defines extensions that allow CONNECT-IP peers to convey DNS
+and PREF64 configuration information to its peer using HTTP capsules
+(<span>[<a href="#HTTP-DGRAM" class="cite xref">HTTP-DGRAM</a>]</span>). These extensions do not define any new way to
+transport DNS queries or responses, but instead enable the exchange of DNS
+resolver configuration and NAT64 prefix information inline with CONNECT-IP
+sessions.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">Note that these extensions are meant for cases where CONNECT-IP operates as a
+Remote Access VPN (see <span><a href="https://rfc-editor.org/rfc/rfc9484#section-8.1" class="relref">Section 8.1</a> of [<a href="#CONNECT-IP" class="cite xref">CONNECT-IP</a>]</span>) or a Site-to-Site VPN
 (see <span><a href="https://rfc-editor.org/rfc/rfc9484#section-8.2" class="relref">Section 8.2</a> of [<a href="#CONNECT-IP" class="cite xref">CONNECT-IP</a>]</span>), but not for cases like IP Flow Forwarding
-(see <span><a href="https://rfc-editor.org/rfc/rfc9484#section-8.3" class="relref">Section 8.3</a> of [<a href="#CONNECT-IP" class="cite xref">CONNECT-IP</a>]</span>).<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">This specification uses Service Bindings (<span>[<a href="#SVCB" class="cite xref">SVCB</a>]</span>) to exchange
-information about nameservers, such as which encrypted DNS transport is
+(see <span><a href="https://rfc-editor.org/rfc/rfc9484#section-8.3" class="relref">Section 8.3</a> of [<a href="#CONNECT-IP" class="cite xref">CONNECT-IP</a>]</span>).<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">For DNS configuration, this specification uses Service Bindings (<span>[<a href="#SVCB" class="cite xref">SVCB</a>]</span>)
+to exchange information about nameservers, such as which encrypted DNS transport is
 supported. This allows support for DNS over HTTPS (<span>[<a href="#DoH" class="cite xref">DoH</a>]</span>), DNS over
 QUIC (<span>[<a href="#DoQ" class="cite xref">DoQ</a>]</span>), DNS over TLS (<span>[<a href="#DoT" class="cite xref">DoT</a>]</span>), unencrypted DNS over
 UDP port 53 and TCP port 53 (<span>[<a href="#DNS" class="cite xref">DNS</a>]</span>), as well as potential future DNS
-transports.<a href="#section-1-3" class="pilcrow">¶</a></p>
+transports. PREF64 configuration is represented in a way similar to Router
+Advertisement option defined in <span><a href="https://rfc-editor.org/rfc/rfc8781#section-4" class="relref">Section 4</a> of [<a href="#PREF64-RA" class="cite xref">PREF64-RA</a>]</span>.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">Similar to how Proxying IP in HTTP exchanges IP address configuration
+information (<span><a href="https://rfc-editor.org/rfc/rfc9484#section-4.7" class="relref">Section 4.7</a> of [<a href="#CONNECT-IP" class="cite xref">CONNECT-IP</a>]</span>), the mechanism defined in this document
+leverages capsules. Similarly, these mechanisms are bidirectional: either endpoint
+can send configuration information.<a href="#section-1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
 <div id="conventions-and-definitions">
-<section id="section-1.1">
-        <h3 id="name-conventions-and-definitions">
-<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
-        </h3>
-<p id="section-1.1-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
 "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
-appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
-<p id="section-1.1-2">This document uses terminology from <span>[<a href="#QUIC" class="cite xref">QUIC</a>]</span>. Where this document
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">This document uses terminology from <span>[<a href="#QUIC" class="cite xref">QUIC</a>]</span>. Where this document
 defines protocol types, the definition format uses the notation from <span><a href="https://rfc-editor.org/rfc/rfc9000#section-1.3" class="relref">Section 1.3</a> of [<a href="#QUIC" class="cite xref">QUIC</a>]</span>. This specification uses the variable-length integer encoding
 from <span><a href="https://rfc-editor.org/rfc/rfc9000#section-16" class="relref">Section 16</a> of [<a href="#QUIC" class="cite xref">QUIC</a>]</span>. Variable-length integer values do not
-need to be encoded in the minimum number of bytes necessary.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
-<p id="section-1.1-3">In this document, we use the term "nameserver" to refer to a DNS recursive
+need to be encoded in the minimum number of bytes necessary.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">In this document, we use the term "nameserver" to refer to a DNS recursive
 resolver as defined in <span><a href="https://rfc-editor.org/rfc/rfc8499#section-6" class="relref">Section 6</a> of [<a href="#DNS-TERMS" class="cite xref">DNS-TERMS</a>]</span>, and the term
-"domain name" is used as defined in <span><a href="https://rfc-editor.org/rfc/rfc8499#section-2" class="relref">Section 2</a> of [<a href="#DNS-TERMS" class="cite xref">DNS-TERMS</a>]</span>.<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+"domain name" is used as defined in <span><a href="https://rfc-editor.org/rfc/rfc8499#section-2" class="relref">Section 2</a> of [<a href="#DNS-TERMS" class="cite xref">DNS-TERMS</a>]</span>.<a href="#section-2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-</section>
-</div>
-<div id="mechanism">
-<section id="section-2">
-      <h2 id="name-mechanism">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-mechanism" class="section-name selfRef">Mechanism</a>
+<div id="dns-configuration-mechanism">
+<section id="section-3">
+      <h2 id="name-dns-configuration-mechanism">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-dns-configuration-mechanism" class="section-name selfRef">DNS Configuration Mechanism</a>
       </h2>
-<p id="section-2-1">Similar to how Proxying IP in HTTP exchanges IP address configuration
-information (<span><a href="https://rfc-editor.org/rfc/rfc9484#section-4.7" class="relref">Section 4.7</a> of [<a href="#CONNECT-IP" class="cite xref">CONNECT-IP</a>]</span>), this mechanism leverages capsules
-to signal DNS configuration information. Similarly, this mechanism is
-bidirectional: either endpoint can send DNS configuration information in a
-<code>DNS_ASSIGN</code> capsule. The capsule format is defined below.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-3-1">Either endpoint can send DNS configuration information in a
+<code>DNS_ASSIGN</code> capsule. The capsule format is defined below.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <div id="domain-structure">
-<section id="section-2.1">
+<section id="section-3.1">
         <h3 id="name-domain-structure">
-<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-domain-structure" class="section-name selfRef">Domain Structure</a>
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-domain-structure" class="section-name selfRef">Domain Structure</a>
         </h3>
 <span id="name-domain-format"></span><div id="domain-format">
 <figure id="figure-1">
-          <div class="alignLeft art-text artwork" id="section-2.1-1.1">
+          <div class="alignLeft art-text artwork" id="section-3.1-1.1">
 <pre>
 Domain {
   Domain Length (i),
@@ -1310,31 +1333,31 @@ Domain {
 <a href="#name-domain-format" class="selfRef">Domain Format</a>
           </figcaption></figure>
 </div>
-<p id="section-2.1-2">Each Domain contains the following fields:<a href="#section-2.1-2" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-2.1-3">
-          <dt id="section-2.1-3.1">Domain Length:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.1-3.2">
-            <p id="section-2.1-3.2.1">Length of the following Domain field, encoded as a variable-length integer.<a href="#section-2.1-3.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">Each Domain contains the following fields:<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-3.1-3">
+          <dt id="section-3.1-3.1">Domain Length:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.1-3.2">
+            <p id="section-3.1-3.2.1">Length of the following Domain field, encoded as a variable-length integer.<a href="#section-3.1-3.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.1-3.3">Domain Name:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.1-3.4">
-            <p id="section-2.1-3.4.1">Fully Qualified Domain Name in DNS presentation format and using an
+<dt id="section-3.1-3.3">Domain Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.1-3.4">
+            <p id="section-3.1-3.4.1">Fully Qualified Domain Name in DNS presentation format and using an
 Internationalized Domain Names for Applications (IDNA) A-label
-(<span>[<a href="#IDNA" class="cite xref">IDNA</a>]</span>).<a href="#section-2.1-3.4.1" class="pilcrow">¶</a></p>
+(<span>[<a href="#IDNA" class="cite xref">IDNA</a>]</span>).<a href="#section-3.1-3.4.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
 </section>
 </div>
 <div id="domain-struct">
-<section id="section-2.2">
+<section id="section-3.2">
         <h3 id="name-nameserver-structure">
-<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-nameserver-structure" class="section-name selfRef">Nameserver Structure</a>
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-nameserver-structure" class="section-name selfRef">Nameserver Structure</a>
         </h3>
 <span id="name-nameserver-format"></span><div id="ns-format">
 <figure id="figure-2">
-          <div class="alignLeft art-text artwork" id="section-2.2-1.1">
+          <div class="alignLeft art-text artwork" id="section-3.2-1.1">
 <pre>
 Nameserver {
   Service Priority (16),
@@ -1352,95 +1375,95 @@ Nameserver {
 <a href="#name-nameserver-format" class="selfRef">Nameserver Format</a>
           </figcaption></figure>
 </div>
-<p id="section-2.2-2">Each Nameserver structure contains the following fields:<a href="#section-2.2-2" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-2.2-3">
-          <dt id="section-2.2-3.1">Service Priority:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-3.2">
-            <p id="section-2.2-3.2.1">The priority of this attribute compared to other nameservers, as specified in
+<p id="section-3.2-2">Each Nameserver structure contains the following fields:<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-3.2-3">
+          <dt id="section-3.2-3.1">Service Priority:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.2-3.2">
+            <p id="section-3.2-3.2.1">The priority of this attribute compared to other nameservers, as specified in
 <span><a href="https://rfc-editor.org/rfc/rfc9460#section-2.4.1" class="relref">Section 2.4.1</a> of [<a href="#SVCB" class="cite xref">SVCB</a>]</span>. Since this specification relies on using Service
 Bindings in ServiceMode (<span><a href="https://rfc-editor.org/rfc/rfc9460#section-2.4.3" class="relref">Section 2.4.3</a> of [<a href="#SVCB" class="cite xref">SVCB</a>]</span>), this field <span class="bcp14">MUST NOT</span> be set
-to 0.<a href="#section-2.2-3.2.1" class="pilcrow">¶</a></p>
+to 0.<a href="#section-3.2-3.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-3.3">IPv4 Address Count:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-3.4">
-            <p id="section-2.2-3.4.1">The number of IPv4 Address fields following this field. Encoded as a
-variable-length integer.<a href="#section-2.2-3.4.1" class="pilcrow">¶</a></p>
+<dt id="section-3.2-3.3">IPv4 Address Count:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.2-3.4">
+            <p id="section-3.2-3.4.1">The number of IPv4 Address fields following this field. Encoded as a
+variable-length integer.<a href="#section-3.2-3.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-3.5">IPv4 Address:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-3.6">
-            <p id="section-2.2-3.6.1">Sequence of IPv4 Addresses that can be used to reach this nameserver. Encoded
-in network byte order.<a href="#section-2.2-3.6.1" class="pilcrow">¶</a></p>
+<dt id="section-3.2-3.5">IPv4 Address:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.2-3.6">
+            <p id="section-3.2-3.6.1">Sequence of IPv4 Addresses that can be used to reach this nameserver. Encoded
+in network byte order.<a href="#section-3.2-3.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-3.7">IPv6 Address Count:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-3.8">
-            <p id="section-2.2-3.8.1">The number of IPv6 Address fields following this field. Encoded as a
-variable-length integer.<a href="#section-2.2-3.8.1" class="pilcrow">¶</a></p>
+<dt id="section-3.2-3.7">IPv6 Address Count:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.2-3.8">
+            <p id="section-3.2-3.8.1">The number of IPv6 Address fields following this field. Encoded as a
+variable-length integer.<a href="#section-3.2-3.8.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-3.9">IPv6 Address:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-3.10">
-            <p id="section-2.2-3.10.1">Sequence of IPv6 Addresses that can be used to reach this nameserver. Encoded
-in network byte order.<a href="#section-2.2-3.10.1" class="pilcrow">¶</a></p>
+<dt id="section-3.2-3.9">IPv6 Address:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.2-3.10">
+            <p id="section-3.2-3.10.1">Sequence of IPv6 Addresses that can be used to reach this nameserver. Encoded
+in network byte order.<a href="#section-3.2-3.10.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-3.11">Authentication Domain Name:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-3.12">
-            <p id="section-2.2-3.12.1">A Domain structure (see <a href="#domain-struct" class="auto internal xref">Section 2.2</a>) representing the domain name of
+<dt id="section-3.2-3.11">Authentication Domain Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.2-3.12">
+            <p id="section-3.2-3.12.1">A Domain structure (see <a href="#domain-struct" class="auto internal xref">Section 3.2</a>) representing the domain name of
 the nameserver. This <span class="bcp14">MAY</span> be empty if the nameserver only supports unencrypted
-DNS (as traditionally sent over UDP port 53 and TCP port 53).<a href="#section-2.2-3.12.1" class="pilcrow">¶</a></p>
+DNS (as traditionally sent over UDP port 53 and TCP port 53).<a href="#section-3.2-3.12.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-3.13">Service Parameters Length:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-3.14">
-            <p id="section-2.2-3.14.1">Length of the following Service Parameters field, encoded as a
-variable-length integer.<a href="#section-2.2-3.14.1" class="pilcrow">¶</a></p>
+<dt id="section-3.2-3.13">Service Parameters Length:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.2-3.14">
+            <p id="section-3.2-3.14.1">Length of the following Service Parameters field, encoded as a
+variable-length integer.<a href="#section-3.2-3.14.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-3.15">Service Parameters:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-3.16">
-            <p id="section-2.2-3.16.1">Set of service parameters that apply to this nameserver. Encoded using the
-wire format specified in <span><a href="https://rfc-editor.org/rfc/rfc9460#section-2.2" class="relref">Section 2.2</a> of [<a href="#SVCB" class="cite xref">SVCB</a>]</span>.<a href="#section-2.2-3.16.1" class="pilcrow">¶</a></p>
+<dt id="section-3.2-3.15">Service Parameters:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.2-3.16">
+            <p id="section-3.2-3.16.1">Set of service parameters that apply to this nameserver. Encoded using the
+wire format specified in <span><a href="https://rfc-editor.org/rfc/rfc9460#section-2.2" class="relref">Section 2.2</a> of [<a href="#SVCB" class="cite xref">SVCB</a>]</span>.<a href="#section-3.2-3.16.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
-<p id="section-2.2-4">Service parameters allow exchanging additional information about the nameserver:<a href="#section-2.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.2-4">Service parameters allow exchanging additional information about the nameserver:<a href="#section-3.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-2.2-5.1">
-            <p id="section-2.2-5.1.1">The "port" service parameter is used to indicate which port the nameserver is
+<li class="normal" id="section-3.2-5.1">
+            <p id="section-3.2-5.1.1">The "port" service parameter is used to indicate which port the nameserver is
 reachable on. If no "port" service parameter is included, this indicates that
-default port numbers should be used.<a href="#section-2.2-5.1.1" class="pilcrow">¶</a></p>
+default port numbers should be used.<a href="#section-3.2-5.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-2.2-5.2">
-            <p id="section-2.2-5.2.1">The "alpn" service parameter is used to indicate which encrypted DNS
+          <li class="normal" id="section-3.2-5.2">
+            <p id="section-3.2-5.2.1">The "alpn" service parameter is used to indicate which encrypted DNS
 transports are supported by this nameserver. If the "no-default-alpn" service
 parameter is omitted, that indicates that the nameserver supports unencrypted
 DNS, as is traditionally sent over UDP port 53 and TCP port 53. In that case,
 the sum of IPv4 Address Count and IPv6 Address Count <span class="bcp14">MUST</span> be nonzero. If
 Authentication Domain Name is empty, the "alpn" and "no-default-alpn" service
-parameter <span class="bcp14">MUST</span> be omitted.<a href="#section-2.2-5.2.1" class="pilcrow">¶</a></p>
+parameter <span class="bcp14">MUST</span> be omitted.<a href="#section-3.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-2.2-5.3">
-            <p id="section-2.2-5.3.1">The "dohpath" service parameter is used to convey a relative DNS over HTTPS
-URI Template, see <span><a href="https://rfc-editor.org/rfc/rfc9461#section-5" class="relref">Section 5</a> of [<a href="#SVCB-DNS" class="cite xref">SVCB-DNS</a>]</span>.<a href="#section-2.2-5.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-3.2-5.3">
+            <p id="section-3.2-5.3.1">The "dohpath" service parameter is used to convey a relative DNS over HTTPS
+URI Template, see <span><a href="https://rfc-editor.org/rfc/rfc9461#section-5" class="relref">Section 5</a> of [<a href="#SVCB-DNS" class="cite xref">SVCB-DNS</a>]</span>.<a href="#section-3.2-5.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-2.2-5.4">
-            <p id="section-2.2-5.4.1">The service parameters <span class="bcp14">MUST NOT</span> include "ipv4hint" or "ipv6hint" SvcParams,
-as they are superseded by the included IP addresses.<a href="#section-2.2-5.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-3.2-5.4">
+            <p id="section-3.2-5.4.1">The service parameters <span class="bcp14">MUST NOT</span> include "ipv4hint" or "ipv6hint" SvcParams,
+as they are superseded by the included IP addresses.<a href="#section-3.2-5.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
 </div>
 <div id="dns-configuration-structure">
-<section id="section-2.3">
+<section id="section-3.3">
         <h3 id="name-dns-configuration-structure">
-<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-dns-configuration-structure" class="section-name selfRef">DNS Configuration Structure</a>
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-dns-configuration-structure" class="section-name selfRef">DNS Configuration Structure</a>
         </h3>
 <span id="name-assigned-address-format"></span><div id="assigned-addr-format">
 <figure id="figure-3">
-          <div class="alignLeft art-text artwork" id="section-2.3-1.1">
+          <div class="alignLeft art-text artwork" id="section-3.3-1.1">
 <pre>
 DNS Configuration {
   Nameserver Count (i),
@@ -1456,54 +1479,54 @@ DNS Configuration {
 <a href="#name-assigned-address-format" class="selfRef">Assigned Address Format</a>
           </figcaption></figure>
 </div>
-<p id="section-2.3-2">Each DNS Configuration contains the following fields:<a href="#section-2.3-2" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlNewline" id="section-2.3-3">
-          <dt id="section-2.3-3.1">Nameserver Count:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.3-3.2">
-            <p id="section-2.3-3.2.1">The number of Nameserver structures following this field. Encoded as
-a variable-length integer.<a href="#section-2.3-3.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.3-2">Each DNS Configuration contains the following fields:<a href="#section-3.3-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-3.3-3">
+          <dt id="section-3.3-3.1">Nameserver Count:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.3-3.2">
+            <p id="section-3.3-3.2.1">The number of Nameserver structures following this field. Encoded as
+a variable-length integer.<a href="#section-3.3-3.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.3-3.3">Nameserver:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.3-3.4">
-            <p id="section-2.3-3.4.1">A series of Nameserver structures representing nameservers.<a href="#section-2.3-3.4.1" class="pilcrow">¶</a></p>
+<dt id="section-3.3-3.3">Nameserver:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.3-3.4">
+            <p id="section-3.3-3.4.1">A series of Nameserver structures representing nameservers.<a href="#section-3.3-3.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.3-3.5">Internal Domain Count:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.3-3.6">
-            <p id="section-2.3-3.6.1">The number of Domain structures following this field. Encoded as a
-variable-length integer.<a href="#section-2.3-3.6.1" class="pilcrow">¶</a></p>
+<dt id="section-3.3-3.5">Internal Domain Count:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.3-3.6">
+            <p id="section-3.3-3.6.1">The number of Domain structures following this field. Encoded as a
+variable-length integer.<a href="#section-3.3-3.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.3-3.7">Internal Domain:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.3-3.8">
-            <p id="section-2.3-3.8.1">A series of Domain structures representing internal domain names.<a href="#section-2.3-3.8.1" class="pilcrow">¶</a></p>
+<dt id="section-3.3-3.7">Internal Domain:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.3-3.8">
+            <p id="section-3.3-3.8.1">A series of Domain structures representing internal domain names.<a href="#section-3.3-3.8.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.3-3.9">Search Domain Count:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.3-3.10">
-            <p id="section-2.3-3.10.1">The number of Domain structures following this field. Encoded as a
-variable-length integer.<a href="#section-2.3-3.10.1" class="pilcrow">¶</a></p>
+<dt id="section-3.3-3.9">Search Domain Count:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.3-3.10">
+            <p id="section-3.3-3.10.1">The number of Domain structures following this field. Encoded as a
+variable-length integer.<a href="#section-3.3-3.10.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.3-3.11">Search Domain:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.3-3.12">
-            <p id="section-2.3-3.12.1">A series of Domain structures representing search domains.<a href="#section-2.3-3.12.1" class="pilcrow">¶</a></p>
+<dt id="section-3.3-3.11">Search Domain:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.3-3.12">
+            <p id="section-3.3-3.12.1">A series of Domain structures representing search domains.<a href="#section-3.3-3.12.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
 </section>
 </div>
 <div id="dns-assign">
-<section id="section-2.4">
+<section id="section-3.4">
         <h3 id="name-dns_assign-capsule">
-<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-dns_assign-capsule" class="section-name selfRef">DNS_ASSIGN Capsule</a>
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-dns_assign-capsule" class="section-name selfRef">DNS_ASSIGN Capsule</a>
         </h3>
-<p id="section-2.4-1">The DNS_ASSIGN capsule (see <a href="#iana" class="auto internal xref">Section 6</a> for the value of the capsule type) allows
-an endpoint to send DNS configuration to its peer.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.4-1">The DNS_ASSIGN capsule (see <a href="#iana" class="auto internal xref">Section 6</a> for the value of the capsule type) allows
+an endpoint to send DNS configuration to its peer.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
 <span id="name-dns_assign-capsule-format"></span><div id="dns-assign-format">
 <figure id="figure-4">
-          <div class="alignLeft art-text artwork" id="section-2.4-2.1">
+          <div class="alignLeft art-text artwork" id="section-3.4-2.1">
 <pre>
 DNS_ASSIGN Capsule {
   Type (i) = DNS_ASSIGN,
@@ -1516,53 +1539,51 @@ DNS_ASSIGN Capsule {
 <a href="#name-dns_assign-capsule-format" class="selfRef">DNS_ASSIGN Capsule Format</a>
           </figcaption></figure>
 </div>
-<p id="section-2.4-3">DNS_ASSIGN capsule <span class="bcp14">MAY</span> include multiple DNS configurations if different DNS
-servers are responsible for separate internal domains.<a href="#section-2.4-3" class="pilcrow">¶</a></p>
-<p id="section-2.4-4">If multiple DNS_ASSIGN capsules are sent in one direction, each DNS_ASSIGN
-capsule supersedes prior ones.<a href="#section-2.4-4" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-3.4-3">DNS_ASSIGN capsule <span class="bcp14">MAY</span> include multiple DNS configurations if different DNS
+servers are responsible for separate internal domains.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
+<p id="section-3.4-4">If multiple DNS_ASSIGN capsules are sent in one direction, each DNS_ASSIGN
+capsule supersedes prior ones.<a href="#section-3.4-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="handling">
-<section id="section-3">
-      <h2 id="name-handling">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-handling" class="section-name selfRef">Handling</a>
-      </h2>
-<p id="section-3-1">Note that internal domains include subdomains. In other words, if the DNS
+<section id="section-3.5">
+        <h3 id="name-handling">
+<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-handling" class="section-name selfRef">Handling</a>
+        </h3>
+<p id="section-3.5-1">Note that internal domains include subdomains. In other words, if the DNS
 configuration contains a domain, that indicates that the corresponding domain
 and all of its subdomains can be resolved by the nameservers exchanged in the
 same DNS configuration. Sending an empty string as an internal domain indicates
 the DNS root; i.e., that the corresponding nameserver can resolve all domain
-names.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">As with other IP Proxying capsules, the receiver can decide whether to use or
+names.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
+<p id="section-3.5-2">As with other IP Proxying capsules, the receiver can decide whether to use or
 ignore the configuration information. For example, in the consumer VPN
 scenario, clients will trust the IP proxy and apply received DNS configuration,
-whereas IP proxies will ignore any DNS configuration sent by the client.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">If the IP proxy sends a DNS_ASSIGN capsule containing a DNS over HTTPS
+whereas IP proxies will ignore any DNS configuration sent by the client.<a href="#section-3.5-2" class="pilcrow">¶</a></p>
+<p id="section-3.5-3">If the IP proxy sends a DNS_ASSIGN capsule containing a DNS over HTTPS
 nameserver, then the client can validate whether the IP proxy is authoritative
 for the origin of the URI template. If this validation succeeds, the client
 <span class="bcp14">SHOULD</span> send its DNS queries to that nameserver directly as independent HTTPS
 requests. When possible, those requests <span class="bcp14">SHOULD</span> be coalesced over the same HTTPS
-connection.<a href="#section-3-3" class="pilcrow">¶</a></p>
+connection.<a href="#section-3.5-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="examples">
-<section id="section-4">
-      <h2 id="name-examples">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
-      </h2>
-<div id="full-tunnel-consumer-vpn">
-<section id="section-4.1">
-        <h3 id="name-full-tunnel-consumer-vpn">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-full-tunnel-consumer-vpn" class="section-name selfRef">Full-Tunnel Consumer VPN</a>
+<section id="section-3.6">
+        <h3 id="name-examples">
+<a href="#section-3.6" class="section-number selfRef">3.6. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
         </h3>
-<p id="section-4.1-1">A full-tunnel consumer VPN hosted at masque.example.org could configure the
+<div id="full-tunnel-consumer-vpn">
+<section id="section-3.6.1">
+          <h4 id="name-full-tunnel-consumer-vpn">
+<a href="#section-3.6.1" class="section-number selfRef">3.6.1. </a><a href="#name-full-tunnel-consumer-vpn" class="section-name selfRef">Full-Tunnel Consumer VPN</a>
+          </h4>
+<p id="section-3.6.1-1">A full-tunnel consumer VPN hosted at masque.example.org could configure the
 client to use DNS over HTTPS to the IP proxy itself by sending the following
-configuration.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+configuration.<a href="#section-3.6.1-1" class="pilcrow">¶</a></p>
 <span id="name-full-tunnel-example"></span><div id="ex-doh">
 <figure id="figure-5">
-          <div class="alignLeft art-text artwork" id="section-4.1-2.1">
+            <div class="alignLeft art-text artwork" id="section-3.6.1-2.1">
 <pre>
 DNS Configuration = {
   Nameservers = [{
@@ -1582,20 +1603,20 @@ DNS Configuration = {
 </div>
 <figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
 <a href="#name-full-tunnel-example" class="selfRef">Full Tunnel Example</a>
-          </figcaption></figure>
+            </figcaption></figure>
 </div>
 </section>
 </div>
 <div id="split-tunnel-enterprise-vpn">
-<section id="section-4.2">
-        <h3 id="name-split-tunnel-enterprise-vpn">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-split-tunnel-enterprise-vpn" class="section-name selfRef">Split-Tunnel Enterprise VPN</a>
-        </h3>
-<p id="section-4.2-1">An enterprise switching their preexisting IKEv2/IPsec split-tunnel VPN to
-connect-ip could use the following configuration.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<section id="section-3.6.2">
+          <h4 id="name-split-tunnel-enterprise-vpn">
+<a href="#section-3.6.2" class="section-number selfRef">3.6.2. </a><a href="#name-split-tunnel-enterprise-vpn" class="section-name selfRef">Split-Tunnel Enterprise VPN</a>
+          </h4>
+<p id="section-3.6.2-1">An enterprise switching their preexisting IKEv2/IPsec split-tunnel VPN to
+connect-ip could use the following configuration.<a href="#section-3.6.2-1" class="pilcrow">¶</a></p>
 <span id="name-split-tunnel-example"></span><div id="ex-split">
 <figure id="figure-6">
-          <div class="alignLeft art-text artwork" id="section-4.2-2.1">
+            <div class="alignLeft art-text artwork" id="section-3.6.2-2.1">
 <pre>
 DNS Configuration = {
   Nameservers = [{
@@ -1615,6 +1636,116 @@ DNS Configuration = {
 </div>
 <figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
 <a href="#name-split-tunnel-example" class="selfRef">Split Tunnel Example</a>
+            </figcaption></figure>
+</div>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="pref64-configuration-mechanism">
+<section id="section-4">
+      <h2 id="name-pref64-configuration-mechan">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-pref64-configuration-mechan" class="section-name selfRef">PREF64 Configuration Mechanism</a>
+      </h2>
+<p id="section-4-1">This document defines a new capsule type, <code>PREF64</code>, that allows a CONNECT-IP peer
+to communicate the IPv6 NAT64 prefixes to be used for IPv6/IPv4 address synthesis.
+This information enables an endpoint operating in an IPv6-only environment to
+construct IPv4-reachable addresses from IPv6 literals when a NAT64 translator is in use.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="pref64-capsule">
+<section id="section-4.1">
+        <h3 id="name-pref64-capsule">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-pref64-capsule" class="section-name selfRef">PREF64 Capsule</a>
+        </h3>
+<p id="section-4.1-1">Each PREF64 capsule conveys zero or more NAT64 prefixes. If multiple capsules are sent
+in the same direction, the most recent one replaces any previously advertised prefixes.
+Empty PREF64 capsule is used to inform that NAT64 prefixes are not available.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">The capsule has the following structure (see <a href="#iana" class="auto internal xref">Section 6</a> for the value of the capsule type):<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<span id="name-pref64-capsule-format"></span><div id="pref64-format">
+<figure id="figure-7">
+          <div class="alignLeft art-text artwork" id="section-4.1-3.1">
+<pre>
+PREF64 Capsule {
+  Type (i) = PREF64,
+  Length (i),
+  NAT64 Prefix (104) ...,
+}
+</pre>
+</div>
+<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
+<a href="#name-pref64-capsule-format" class="selfRef">PREF64 Capsule Format</a>
+          </figcaption></figure>
+</div>
+<p id="section-4.1-4">Individual NAT64 prefix has the following structure:<a href="#section-4.1-4" class="pilcrow">¶</a></p>
+<span id="name-nat64-prefix-format"></span><div id="nat64-prefix">
+<figure id="figure-8">
+          <div class="alignLeft art-text artwork" id="section-4.1-5.1">
+<pre>
+NAT64 Prefix {
+  Prefix Length (8),
+  Prefix (96),
+}
+</pre>
+</div>
+<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<a href="#name-nat64-prefix-format" class="selfRef">NAT64 Prefix Format</a>
+          </figcaption></figure>
+</div>
+<p id="section-4.1-6">NAT64 prefix fields are:<a href="#section-4.1-6" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.1-7">
+          <dt id="section-4.1-7.1">Prefix Length:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-7.2">
+            <p id="section-4.1-7.2.1">The length of the NAT64 prefix in bits encoded as a single byte. Valid values are 32, 40, 48,
+56, 64, and 96. These lengths correspond to the prefix sizes permitted for the IPv6-to-IPv4
+address synthesis algorithm described in <span><a href="https://rfc-editor.org/rfc/rfc6052#section-2.2" class="relref">Section 2.2</a> of [<a href="#IPv6-TRANSLATOR" class="cite xref">IPv6-TRANSLATOR</a>]</span>.<a href="#section-4.1-7.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-7.3">Prefix:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-7.4">
+            <p id="section-4.1-7.4.1">The highest 96 bits of the IPv6 prefix, encoded in network byte order. Note that this field is
+always 96 bits long, regardless of the value in the Prefix Length field
+preceding it, see <span><a href="https://rfc-editor.org/rfc/rfc6052#section-2.2" class="relref">Section 2.2</a> of [<a href="#IPv6-TRANSLATOR" class="cite xref">IPv6-TRANSLATOR</a>]</span> for details.<a href="#section-4.1-7.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="handling-1">
+<section id="section-4.2">
+        <h3 id="name-handling-2">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-handling-2" class="section-name selfRef">Handling</a>
+        </h3>
+<p id="section-4.2-1">Upon receiving a PREF64 capsule, a peer updates its local NAT64 configuration for the
+corresponding CONNECT-IP session. The newly received PREF64 capsule overrides any previously
+received PREF64 capsules in the same direction.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">If an endpoint receives a capsule that does not meet one of the requirements listed in <a href="#pref64-capsule" class="auto internal xref">Section 4.1</a>, or
+with a length that is not a multiple of 13 bytes, it <span class="bcp14">MUST</span> treat it as malformed. An empty
+PREF64 capsule invalidates any previously received NAT64 Prefixes.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example">
+<section id="section-4.3">
+        <h3 id="name-example">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-example" class="section-name selfRef">Example</a>
+        </h3>
+<p id="section-4.3-1">A CONNECT-IP peer would use the following capsule to signal a single NAT64 prefix of <code>64:ff9b::/96</code><a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<span id="name-pref64-capsule-example"></span><div id="ex-pref64">
+<figure id="figure-9">
+          <div class="alignLeft art-text artwork" id="section-4.3-2.1">
+<pre>
+PREF64 Capsule {
+  Type (i) = PREF64,
+  Length (i) = 13,
+  NAT64 Prefix {
+    Prefix Length (8) = 96
+    Prefix (96) = 0x00 0x64 0xff 0x9b 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00,
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
+<a href="#name-pref64-capsule-example" class="selfRef">PREF64 Capsule Example</a>
           </figcaption></figure>
 </div>
 </section>
@@ -1641,44 +1772,61 @@ corresponding ROUTE_ADVERTISEMENT capsule.<a href="#section-5-2" class="pilcrow"
       <h2 id="name-iana-considerations">
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-6-1">This document, if approved, will request IANA add the following value to the
+<p id="section-6-1">This document, if approved, will request IANA add the following values to the
 "HTTP Capsule Types" registry maintained at
 &lt;<span><a href="https://www.iana.org/assignments/masque">https://www.iana.org/assignments/masque</a></span>&gt;.<a href="#section-6-1" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlCompact dlParallel" id="section-6-2">
-        <dt id="section-6-2.1">Value:</dt>
-        <dd style="margin-left: 1.5em" id="section-6-2.2">
-          <p id="section-6-2.2.1">0x1ACE79EC (if this document is approved, this value will be
-replaced by a smaller one before publication)<a href="#section-6-2.2.1" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+        <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+          <tr>
+            <th class="text-left" rowspan="1" colspan="1">Value</th>
+            <th class="text-left" rowspan="1" colspan="1">Capsule Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">0x1ACE79EC (if this document is approved, this value will be</td>
+            <td class="text-left" rowspan="1" colspan="1"> </td>
+          </tr>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">replaced by a smaller one before publication)</td>
+            <td class="text-left" rowspan="1" colspan="1">DNS_ASSIGN</td>
+          </tr>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">0x274C0FBC (if this document is approved, this value will be</td>
+            <td class="text-left" rowspan="1" colspan="1"> </td>
+          </tr>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">replaced by a smaller one before publication)</td>
+            <td class="text-left" rowspan="1" colspan="1">PREF64</td>
+          </tr>
+        </tbody>
+      </table>
+<p id="section-6-3">All of these new entries use the following values for these fields:<a href="#section-6-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-6-4">
+        <dt id="section-6-4.1">Status:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-4.2">
+          <p id="section-6-4.2.1">provisional (permanent if this document is approved)<a href="#section-6-4.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-6-2.3">Capsule Type:</dt>
-        <dd style="margin-left: 1.5em" id="section-6-2.4">
-          <p id="section-6-2.4.1">DNS_ASSIGN<a href="#section-6-2.4.1" class="pilcrow">¶</a></p>
+<dt id="section-6-4.3">Reference:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-4.4">
+          <p id="section-6-4.4.1">This document<a href="#section-6-4.4.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-6-2.5">Status:</dt>
-        <dd style="margin-left: 1.5em" id="section-6-2.6">
-          <p id="section-6-2.6.1">provisional (permanent if this document is approved)<a href="#section-6-2.6.1" class="pilcrow">¶</a></p>
+<dt id="section-6-4.5">Change Controller:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-4.6">
+          <p id="section-6-4.6.1">IETF<a href="#section-6-4.6.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-6-2.7">Reference:</dt>
-        <dd style="margin-left: 1.5em" id="section-6-2.8">
-          <p id="section-6-2.8.1">This document<a href="#section-6-2.8.1" class="pilcrow">¶</a></p>
+<dt id="section-6-4.7">Contact:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-4.8">
+          <p id="section-6-4.8.1">masque@ietf.org<a href="#section-6-4.8.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-6-2.9">Change Controller:</dt>
-        <dd style="margin-left: 1.5em" id="section-6-2.10">
-          <p id="section-6-2.10.1">IETF<a href="#section-6-2.10.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-6-2.11">Contact:</dt>
-        <dd style="margin-left: 1.5em" id="section-6-2.12">
-          <p id="section-6-2.12.1">masque@ietf.org<a href="#section-6-2.12.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-6-2.13">Notes:</dt>
-        <dd style="margin-left: 1.5em" id="section-6-2.14">
-          <p id="section-6-2.14.1">None<a href="#section-6-2.14.1" class="pilcrow">¶</a></p>
+<dt id="section-6-4.9">Notes:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-4.10">
+          <p id="section-6-4.10.1">None<a href="#section-6-4.10.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -1727,6 +1875,10 @@ replaced by a smaller one before publication)<a href="#section-6-2.2.1" class="p
         <dd>
 <span class="refAuthor">Klensin, J.</span>, <span class="refTitle">"Internationalized Domain Names for Applications (IDNA): Definitions and Document Framework"</span>, <span class="seriesInfo">RFC 5890</span>, <span class="seriesInfo">DOI 10.17487/RFC5890</span>, <time datetime="2010-08" class="refDate">August 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5890">https://www.rfc-editor.org/rfc/rfc5890</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="IPv6-TRANSLATOR">[IPv6-TRANSLATOR]</dt>
+        <dd>
+<span class="refAuthor">Bao, C.</span>, <span class="refAuthor">Huitema, C.</span>, <span class="refAuthor">Bagnulo, M.</span>, <span class="refAuthor">Boucadair, M.</span>, and <span class="refAuthor">X. Li</span>, <span class="refTitle">"IPv6 Addressing of IPv4/IPv6 Translators"</span>, <span class="seriesInfo">RFC 6052</span>, <span class="seriesInfo">DOI 10.17487/RFC6052</span>, <time datetime="2010-10" class="refDate">October 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6052">https://www.rfc-editor.org/rfc/rfc6052</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="QUIC">[QUIC]</dt>
         <dd>
 <span class="refAuthor">Iyengar, J., Ed.</span> and <span class="refAuthor">M. Thomson, Ed.</span>, <span class="refTitle">"QUIC: A UDP-Based Multiplexed and Secure Transport"</span>, <span class="seriesInfo">RFC 9000</span>, <span class="seriesInfo">DOI 10.17487/RFC9000</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9000">https://www.rfc-editor.org/rfc/rfc9000</a>&gt;</span>. </dd>
@@ -1765,8 +1917,12 @@ replaced by a smaller one before publication)<a href="#section-6-2.2.1" class="p
 <span class="refAuthor">Pauly, T.</span> and <span class="refAuthor">P. Wouters</span>, <span class="refTitle">"Split DNS Configuration for the Internet Key Exchange Protocol Version 2 (IKEv2)"</span>, <span class="seriesInfo">RFC 8598</span>, <span class="seriesInfo">DOI 10.17487/RFC8598</span>, <time datetime="2019-05" class="refDate">May 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8598">https://www.rfc-editor.org/rfc/rfc8598</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="IKEv2-SVCB">[IKEv2-SVCB]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Boucadair, M.</span>, <span class="refAuthor">Reddy.K, T.</span>, <span class="refAuthor">Wing, D.</span>, and <span class="refAuthor">V. Smyslov</span>, <span class="refTitle">"Internet Key Exchange Protocol Version 2 (IKEv2) Configuration for Encrypted DNS"</span>, <span class="seriesInfo">RFC 9464</span>, <span class="seriesInfo">DOI 10.17487/RFC9464</span>, <time datetime="2023-11" class="refDate">November 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9464">https://www.rfc-editor.org/rfc/rfc9464</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="PREF64-RA">[PREF64-RA]</dt>
+      <dd>
+<span class="refAuthor">Colitti, L.</span> and <span class="refAuthor">J. Linkova</span>, <span class="refTitle">"Discovering PREF64 in Router Advertisements"</span>, <span class="seriesInfo">RFC 8781</span>, <span class="seriesInfo">DOI 10.17487/RFC8781</span>, <time datetime="2020-04" class="refDate">April 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8781">https://www.rfc-editor.org/rfc/rfc8781</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
