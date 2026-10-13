@@ -1339,12 +1339,17 @@ Domain {
           <dd class="break"></dd>
 <dt id="section-3.1-3.3">Domain Name:</dt>
           <dd style="margin-left: 1.5em" id="section-3.1-3.4">
-            <p id="section-3.1-3.4.1">Fully Qualified Domain Name in DNS presentation format and using an
-Internationalized Domain Names for Applications (IDNA) A-label
+            <p id="section-3.1-3.4.1">A Fully Qualified Domain Name (FQDN) in common display format
+(<span><a href="https://rfc-editor.org/rfc/rfc8499#section-2" class="relref">Section 2</a> of [<a href="#DNS-TERMS" class="cite xref">DNS-TERMS</a>]</span>). The trailing dot representing the DNS root
+<span class="bcp14">MUST</span> be omitted. Internationalized labels <span class="bcp14">MUST</span> be encoded as IDNA A-labels
 (<span>[<a href="#IDNA" class="cite xref">IDNA</a>]</span>).<a href="#section-3.1-3.4.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
+<p id="section-3.1-4">Since these are FQDNs,
+receivers <span class="bcp14">MUST NOT</span> append a search domain or any other suffix to non-empty
+values. Empty values have the meaning specified by the field containing
+the Domain structure.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="domain-struct">
@@ -1481,7 +1486,7 @@ DNS Configuration {
           <dt id="section-3.3-3.1">Nameserver Count:</dt>
           <dd style="margin-left: 1.5em" id="section-3.3-3.2">
             <p id="section-3.3-3.2.1">The number of Nameserver structures following this field. Encoded as
-a variable-length integer.<a href="#section-3.3-3.2.1" class="pilcrow">¶</a></p>
+a variable-length integer. This field <span class="bcp14">MUST NOT</span> be zero.<a href="#section-3.3-3.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-3.3-3.3">Nameserver:</dt>
@@ -1540,6 +1545,8 @@ DNS_ASSIGN Capsule {
 servers are responsible for separate internal domains.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
 <p id="section-3.4-4">If multiple DNS_ASSIGN capsules are sent in one direction, each DNS_ASSIGN
 capsule supersedes prior ones.<a href="#section-3.4-4" class="pilcrow">¶</a></p>
+<p id="section-3.4-5">An empty DNS_ASSIGN capsule indicates that there are no DNS services available;
+this can be used to withdraw previous configurations.<a href="#section-3.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="handling">
@@ -1590,6 +1597,7 @@ DNS Configuration = {
     Authentication Domain Name = "masque.example.org",
     Service Parameters = {
       alpn=h2,h3
+      no-default-alpn
       dohpath=/dns-query{?dns}
     },
   }],
@@ -1934,7 +1942,8 @@ corresponding ROUTE_ADVERTISEMENT capsule.<a href="#section-5-2" class="pilcrow"
 <p id="appendix-A-1">The mechanism in this document was inspired by <span>[<a href="#IKEv2" class="cite xref">IKEv2</a>]</span>,
 <span>[<a href="#IKEv2-DNS" class="cite xref">IKEv2-DNS</a>]</span>, and <span>[<a href="#IKEv2-SVCB" class="cite xref">IKEv2-SVCB</a>]</span>. The authors would like to
 thank <span class="contact-name">Alejandro Sedeño</span>, <span class="contact-name">Alex Chernyakhovsky</span>, <span class="contact-name">Tommy Pauly</span>,
-and other enthusiasts in the MASQUE Working Group for their contributions.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<span class="contact-name">Marten Seemann</span>, and other enthusiasts in the MASQUE Working Group for
+their contributions.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
