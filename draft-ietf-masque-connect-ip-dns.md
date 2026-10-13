@@ -327,6 +327,7 @@ DNS Configuration = {
     Authentication Domain Name = "masque.example.org",
     Service Parameters = {
       alpn=h2,h3
+      no-default-alpn
       dohpath=/dns-query{?dns}
     },
   }],
