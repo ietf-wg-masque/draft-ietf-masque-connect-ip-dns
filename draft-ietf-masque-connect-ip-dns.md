@@ -145,8 +145,8 @@ Domain Name:
 MUST be omitted. Internationalized labels MUST be encoded as IDNA A-labels
 ({{!IDNA=RFC5890}}).
 
-Non-empty Domain Name values MUST be interpreted as absolute domain names;
-receivers MUST NOT append a search domain or any other suffix to these
+Since these are FQDNs,
+receivers MUST NOT append a search domain or any other suffix to non-empty
 values. Empty values have the meaning specified by the field containing
 the Domain structure.
 
