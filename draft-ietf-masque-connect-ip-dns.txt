@@ -175,9 +175,14 @@ Table of Contents
    Domain Length:  Length of the following Domain field, encoded as a
       variable-length integer.
 
-   Domain Name:  Fully Qualified Domain Name in DNS presentation format
-      and using an Internationalized Domain Names for Applications
-      (IDNA) A-label ([IDNA]).
+   Domain Name:  A Fully Qualified Domain Name (FQDN) in common display
+      format (Section 2 of [DNS-TERMS]).  The trailing dot representing
+      the DNS root MUST be omitted.  Internationalized labels MUST be
+      encoded as IDNA A-labels ([IDNA]).
+
+   Since these are FQDNs, receivers MUST NOT append a search domain or
+   any other suffix to non-empty values.  Empty values have the meaning
+   specified by the field containing the Domain structure.
 
 3.2.  Nameserver Structure
 
@@ -595,8 +600,8 @@ Acknowledgments
 
    The mechanism in this document was inspired by [IKEv2], [IKEv2-DNS],
    and [IKEv2-SVCB].  The authors would like to thank Alejandro Sedeño,
-   Alex Chernyakhovsky, Tommy Pauly, and other enthusiasts in the MASQUE
-   Working Group for their contributions.
+   Alex Chernyakhovsky, Tommy Pauly, Marten Seemann, and other
+   enthusiasts in the MASQUE Working Group for their contributions.
 
 Authors' Addresses
 
