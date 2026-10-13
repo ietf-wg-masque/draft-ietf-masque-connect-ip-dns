@@ -250,7 +250,7 @@ Each DNS Configuration contains the following fields:
 Nameserver Count:
 
 : The number of Nameserver structures following this field. Encoded as
-a variable-length integer.
+a variable-length integer. This field MUST NOT be zero.
 
 Nameserver:
 
@@ -294,6 +294,9 @@ servers are responsible for separate internal domains.
 
 If multiple DNS_ASSIGN capsules are sent in one direction, each DNS_ASSIGN
 capsule supersedes prior ones.
+
+An empty DNS_ASSIGN capsule indicates that there are no DNS services available;
+this can be used to withdraw previous configurations.
 
 ## Handling
 
