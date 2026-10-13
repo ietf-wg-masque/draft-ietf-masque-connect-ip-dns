@@ -140,7 +140,7 @@ Domain Length:
 
 Domain Name:
 
-: A fully qualified domain name in common display format
+: A Fully Qualified Domain Name (FQDN) in common display format
 ({{Section 2 of DNS-TERMS}}). The trailing dot representing the DNS root
 MUST be omitted. Internationalized labels MUST be encoded as IDNA A-labels
 ({{!IDNA=RFC5890}}).
