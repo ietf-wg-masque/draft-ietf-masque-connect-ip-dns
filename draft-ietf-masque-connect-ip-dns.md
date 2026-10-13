@@ -140,9 +140,15 @@ Domain Length:
 
 Domain Name:
 
-: Fully Qualified Domain Name in DNS presentation format and using an
-Internationalized Domain Names for Applications (IDNA) A-label
+: A Fully Qualified Domain Name (FQDN) in common display format
+({{Section 2 of DNS-TERMS}}). The trailing dot representing the DNS root
+MUST be omitted. Internationalized labels MUST be encoded as IDNA A-labels
 ({{!IDNA=RFC5890}}).
+
+Since these are FQDNs,
+receivers MUST NOT append a search domain or any other suffix to non-empty
+values. Empty values have the meaning specified by the field containing
+the Domain structure.
 
 ## Nameserver Structure {#domain-struct}
 
@@ -491,4 +497,5 @@ Notes:
 The mechanism in this document was inspired by {{IKEv2}},
 {{?IKEv2-DNS=RFC8598}}, and {{?IKEv2-SVCB=RFC9464}}. The authors would like to
 thank {{{Alejandro Sedeño}}}, {{{Alex Chernyakhovsky}}}, {{{Tommy Pauly}}},
-and other enthusiasts in the MASQUE Working Group for their contributions.
+{{{Marten Seemann}}}, and other enthusiasts in the MASQUE Working Group for
+their contributions.
