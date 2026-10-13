@@ -5,8 +5,8 @@
 MASQUE                                                       D. Schinazi
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                            Y. Rosomakho
-Expires: 31 January 2027                                         Zscaler
-                                                            30 July 2026
+Expires: 16 April 2027                                           Zscaler
+                                                         13 October 2026
 
 
           DNS and PREF64 Configuration for Proxying IP in HTTP
@@ -60,7 +60,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 31 January 2027.
+   This Internet-Draft will expire on 16 April 2027.
 
 Copyright Notice
 
@@ -340,6 +340,7 @@ Table of Contents
        Authentication Domain Name = "masque.example.org",
        Service Parameters = {
          alpn=h2,h3
+         no-default-alpn
          dohpath=/dns-query{?dns}
        },
      }],
