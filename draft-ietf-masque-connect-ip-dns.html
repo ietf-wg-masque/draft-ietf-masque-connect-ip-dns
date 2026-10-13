@@ -1486,7 +1486,7 @@ DNS Configuration {
           <dt id="section-3.3-3.1">Nameserver Count:</dt>
           <dd style="margin-left: 1.5em" id="section-3.3-3.2">
             <p id="section-3.3-3.2.1">The number of Nameserver structures following this field. Encoded as
-a variable-length integer.<a href="#section-3.3-3.2.1" class="pilcrow">¶</a></p>
+a variable-length integer. This field <span class="bcp14">MUST NOT</span> be zero.<a href="#section-3.3-3.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-3.3-3.3">Nameserver:</dt>
@@ -1545,6 +1545,8 @@ DNS_ASSIGN Capsule {
 servers are responsible for separate internal domains.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
 <p id="section-3.4-4">If multiple DNS_ASSIGN capsules are sent in one direction, each DNS_ASSIGN
 capsule supersedes prior ones.<a href="#section-3.4-4" class="pilcrow">¶</a></p>
+<p id="section-3.4-5">An empty DNS_ASSIGN capsule indicates that there are no DNS services available;
+this can be used to withdraw previous configurations.<a href="#section-3.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="handling">

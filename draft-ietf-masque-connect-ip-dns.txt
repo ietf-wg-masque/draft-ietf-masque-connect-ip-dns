@@ -269,7 +269,7 @@ Table of Contents
 
    Nameserver Count:
       The number of Nameserver structures following this field.  Encoded
-      as a variable-length integer.
+      as a variable-length integer.  This field MUST NOT be zero.
 
    Nameserver:
       A series of Nameserver structures representing nameservers.
@@ -306,6 +306,9 @@ Table of Contents
 
    If multiple DNS_ASSIGN capsules are sent in one direction, each
    DNS_ASSIGN capsule supersedes prior ones.
+
+   An empty DNS_ASSIGN capsule indicates that there are no DNS services
+   available; this can be used to withdraw previous configurations.
 
 3.5.  Handling
 
